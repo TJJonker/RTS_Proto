@@ -164,11 +164,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 67197249}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2aea8ed6baee67040902cc1238c5a0f7, type: 3}
+  m_Script: {fileID: 11500000, guid: c0d5eaf8a9352144a89ec6749cebde32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destinationThresHold: 0.0397
-  movementSpeed: 0.08
+  entity: {fileID: 67197250}
+  movementType: 1
+  destinationThresHold: 0.02
+  movementSpeed: 4
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

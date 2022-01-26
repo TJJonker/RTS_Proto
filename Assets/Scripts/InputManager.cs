@@ -3,7 +3,7 @@ using UnityEngine;
 public class InputManager : MonoBehaviour
 {
     // Remove
-    [SerializeField] private Move move;
+    [SerializeField] private Movement move;
     [SerializeField] private Camera mainCamera;
 
     private void Update()
