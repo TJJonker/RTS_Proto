@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
@@ -6,6 +7,8 @@ public class InputManager : MonoBehaviour
     [SerializeField] private GameObject selectionSquare;
 
     private Vector2 selectionStart;
+
+    private List<UnitRS> selectedUnits = new List<UnitRS>();
 
     private void Update()
     {
@@ -20,12 +23,33 @@ public class InputManager : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             DrawSelectionSquare();
+            SelectUnits();
+
         }
 
         // Release left mouse button
         if (Input.GetMouseButtonUp(0))
         {
+
             selectionSquare.SetActive(false);
+        }
+    }
+
+    private void SelectUnits()
+    {
+        foreach (UnitRS unit in selectedUnits)
+            unit.SetSelectedActive(false);
+        selectedUnits.Clear();
+
+        Collider2D[] collider2DArray = Physics2D.OverlapAreaAll(selectionStart, MouseToScreen(Input.mousePosition));
+        foreach (Collider2D collider in collider2DArray)
+        {
+            UnitRS unitRS = collider.GetComponent<UnitRS>();
+            if (unitRS != null)
+            {
+                selectedUnits.Add(unitRS);
+                unitRS.SetSelectedActive(true);
+            }
         }
     }
 
