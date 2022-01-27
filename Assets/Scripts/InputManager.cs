@@ -23,24 +23,34 @@ public class InputManager : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             DrawSelectionSquare();
+            DeselectUnits();
             SelectUnits();
-
         }
 
         // Release left mouse button
         if (Input.GetMouseButtonUp(0))
         {
-
             selectionSquare.SetActive(false);
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            foreach(UnitRS unit in selectedUnits)
+            {
+                unit.GetComponent<Movement>().MoveObject(MouseToScreen(Input.mousePosition));
+            }
         }
     }
 
-    private void SelectUnits()
+    private void DeselectUnits()
     {
         foreach (UnitRS unit in selectedUnits)
             unit.SetSelectedActive(false);
         selectedUnits.Clear();
+    }
 
+    private void SelectUnits()
+    {
         Collider2D[] collider2DArray = Physics2D.OverlapAreaAll(selectionStart, MouseToScreen(Input.mousePosition));
         foreach (Collider2D collider in collider2DArray)
         {
