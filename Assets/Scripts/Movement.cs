@@ -14,6 +14,10 @@ public class Movement : MonoBehaviour
     [Header("Movement Variables")]
     [SerializeField, Range(0, 0.1f)] private float destinationThresHold;
     [SerializeField, Range(0, 15)] private float movementSpeed;
+
+    [Header("Animation Variables")]
+    [SerializeField] private float animationSpeed;
+    [SerializeField] private float animationHeight;
     #endregion
 
     #region Public Fields
@@ -23,15 +27,17 @@ public class Movement : MonoBehaviour
         set { 
             movementType = value; 
             currentMovement = MovementTypeToIMovement(value);
+            currentMovement.Object = entity;
+            currentMovement.Speed = animationSpeed;
+            currentMovement.Height = animationHeight;
         }
     }
     #endregion
 
-
     #region Private Fields
     private Coroutine Moving;    
 
-    private IMovement hoppingMovement;
+    private IMovement hoppingMovement = new HoppingMovement();
     private IMovement rollingMovement;
     private IMovement flyingMovement;
 
@@ -41,6 +47,10 @@ public class Movement : MonoBehaviour
 
     #region Logic
     private void Awake() => entity = entity == null ? transform.GetChild(0) : entity;
+
+    private void Start() => MovementType = movementType;
+
+    private void Update() => currentMovement.Move(Moving != null);
 
     public void MoveObject(Vector2 desiredPosition)
     {
@@ -61,6 +71,7 @@ public class Movement : MonoBehaviour
         }
         // Setting position
         transform.position = desiredPosition;
+        Moving = null;
     }
     #endregion
 

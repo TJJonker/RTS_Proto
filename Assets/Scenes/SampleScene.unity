@@ -167,10 +167,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0d5eaf8a9352144a89ec6749cebde32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entity: {fileID: 67197250}
-  movementType: 1
+  entity: {fileID: 1562963089}
+  movementType: 0
   destinationThresHold: 0.02
   movementSpeed: 4
+  animationSpeed: 15
+  animationHeight: 0.25
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
