@@ -6,7 +6,6 @@ public class HoppingMovement : IMovement
     public float Height { get; set; }
     public Transform Object { get; set; }
 
-
     private float sinX;
     private float speed;
     private float rotation;    

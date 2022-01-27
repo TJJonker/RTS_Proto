@@ -13,7 +13,10 @@ public class Movement : MonoBehaviour
 
     [Header("Movement Variables")]
     [SerializeField, Range(0, 0.1f)] private float destinationThresHold;
-    [SerializeField, Range(0, 15)] private float movementSpeed;
+    [SerializeField, Range(0.1f, 15)] private float movementSpeed;
+
+    [Header("Rotation Variables")]
+    [SerializeField, Range(0.1f, 2)] private float timeToRotate = 1;
 
     [Header("Animation Variables")]
     [SerializeField] private float animationSpeed;
@@ -35,7 +38,12 @@ public class Movement : MonoBehaviour
     #endregion
 
     #region Private Fields
-    private Coroutine Moving;    
+    private Coroutine Moving;
+    private Coroutine Rotating;
+
+    private int lookingDirection = 1;
+
+    private Vector3 spriteScale;
 
     private IMovement hoppingMovement = new HoppingMovement();
     private IMovement rollingMovement;
@@ -48,7 +56,11 @@ public class Movement : MonoBehaviour
     #region Logic
     private void Awake() => entity = entity == null ? transform.GetChild(0) : entity;
 
-    private void Start() => MovementType = movementType;
+    private void Start()
+    {
+        MovementType = movementType;
+        spriteScale = transform.localScale;
+    }
 
     private void Update() => currentMovement.Move(Moving != null);
 
@@ -63,6 +75,10 @@ public class Movement : MonoBehaviour
         // Calculating direction to move in
         var direction = desiredPosition - (Vector2)transform.position;
         direction.Normalize();
+
+        // Rotate object if needed
+        RotateObject(direction.x);
+
         // Moving
         while (Vector3.Distance(transform.position, desiredPosition) > destinationThresHold)
         {
@@ -73,6 +89,36 @@ public class Movement : MonoBehaviour
         transform.position = desiredPosition;
         Moving = null;
     }
+
+    private void RotateObject(float direction)
+    {
+        if (!OppositePositiveNegative(direction, lookingDirection)) return;
+        if (Rotating != null) StopCoroutine(Rotating);
+        Rotating = StartCoroutine(Rotate());
+    }
+
+    private IEnumerator Rotate()
+    {
+        // Rotate lookingDirection
+        lookingDirection = -lookingDirection;
+        // Preparing scaling variables
+        var originalScale = transform.localScale;
+        var desiredScale = spriteScale;
+        desiredScale.x *= lookingDirection;
+        // Saving starting time
+        var startTime = Time.time;
+
+        var fracComplete = 0f;
+        while (fracComplete < 1)
+        {
+            fracComplete = (Time.time - startTime) / timeToRotate;
+            Debug.Log(fracComplete);
+            transform.localScale = Vector3.Slerp(originalScale, desiredScale, fracComplete);
+            yield return null;
+        }
+
+        Rotating = null;
+    }
     #endregion
 
     #region Helper Methods
@@ -81,6 +127,11 @@ public class Movement : MonoBehaviour
         if (type == EMovementType.Hopping) return hoppingMovement;
         if (type == EMovementType.Rolling) return rollingMovement;
         return flyingMovement;
+    }
+
+    private bool OppositePositiveNegative(float i1, float i2)
+    {
+        return i1 > 0 && i2 < 0 || i1 < 0 && i2 > 0;
     }
     #endregion
 

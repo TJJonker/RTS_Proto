@@ -172,6 +172,7 @@ MonoBehaviour:
   movementType: 0
   destinationThresHold: 0.02
   movementSpeed: 4
+  timeToRotate: 0.514
   animationSpeed: 15
   animationHeight: 0.25
 --- !u!212 &67197252
@@ -219,7 +220,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.34375, y: 0.09375}
+  m_Size: {x: 0.11, y: 0.03}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
