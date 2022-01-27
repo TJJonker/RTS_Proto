@@ -64,6 +64,8 @@ public class Movement : MonoBehaviour
 
     private void Update() => currentMovement.Move(Moving != null);
 
+
+
     public void MoveObject(Vector2 desiredPosition)
     {
         if (Moving != null) StopCoroutine(Moving);
@@ -112,7 +114,6 @@ public class Movement : MonoBehaviour
         while (fracComplete < 1)
         {
             fracComplete = (Time.time - startTime) / timeToRotate;
-            Debug.Log(fracComplete);
             transform.localScale = Vector3.Slerp(originalScale, desiredScale, fracComplete);
             yield return null;
         }
