@@ -3,7 +3,7 @@ using UnityEngine;
 
 public enum EMovementType { Hopping, Rolling, flying }
 
-public class Movement : MonoBehaviour
+public class MovementState : MonoBehaviour, IUnitState
 {
     #region Serialized Fields
     [SerializeField] private Transform entity;
@@ -54,17 +54,26 @@ public class Movement : MonoBehaviour
 
 
     #region Logic
-    private void Awake() => entity = entity == null ? transform.GetChild(0) : entity;
+    private void Awake() 
+        => entity = entity == null ? transform.GetChild(0) : entity;
 
-    private void Start()
+    public void EnterState()
     {
         MovementType = movementType;
         spriteScale = transform.localScale;
     }
 
-    private void Update() => currentMovement.Move(Moving != null);
+    public void UpdateState()
+    {
+        currentMovement.Move(Moving != null);
+    }
 
-
+    public void ExitState()
+    {
+        StopAllCoroutines();
+        Moving = null;
+        Rotating = null;
+    }
 
     public void MoveObject(Vector2 desiredPosition)
     {

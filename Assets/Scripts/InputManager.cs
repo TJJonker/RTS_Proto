@@ -8,7 +8,7 @@ public class InputManager : MonoBehaviour
 
     private Vector2 selectionStart;
 
-    private List<UnitRS> selectedUnits = new List<UnitRS>();
+    private List<RTSUnit> selectedUnits = new List<RTSUnit>();
 
     private void Update()
     {
@@ -40,9 +40,9 @@ public class InputManager : MonoBehaviour
 
             int targetPositionListIndex = 0;
 
-            foreach(UnitRS unit in selectedUnits)
+            foreach(RTSUnit unit in selectedUnits)
             {
-                unit.GetComponent<Movement>().MoveObject(targetPositionList[targetPositionListIndex]);
+                unit.RequestMovement(targetPositionList[targetPositionListIndex]);
                 targetPositionListIndex = (targetPositionListIndex + 1) % targetPositionList.Count;
             }
         }
@@ -50,7 +50,7 @@ public class InputManager : MonoBehaviour
 
     private void DeselectUnits()
     {
-        foreach (UnitRS unit in selectedUnits)
+        foreach (RTSUnit unit in selectedUnits)
             unit.SetSelectedActive(false);
         selectedUnits.Clear();
     }
@@ -60,7 +60,7 @@ public class InputManager : MonoBehaviour
         Collider2D[] collider2DArray = Physics2D.OverlapAreaAll(selectionStart, MouseToScreen(Input.mousePosition));
         foreach (Collider2D collider in collider2DArray)
         {
-            UnitRS unitRS = collider.GetComponent<UnitRS>();
+            RTSUnit unitRS = collider.GetComponent<RTSUnit>();
             if (unitRS != null)
             {
                 selectedUnits.Add(unitRS);
