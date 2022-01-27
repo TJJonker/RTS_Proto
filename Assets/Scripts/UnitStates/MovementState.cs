@@ -6,6 +6,7 @@ public enum EMovementType { Hopping, Rolling, flying }
 public class MovementState : MonoBehaviour, IUnitState
 {
     #region Serialized Fields
+    [Tooltip("The sprite of the object")]
     [SerializeField] private Transform entity;
 
     [Header("Movement Type")]
@@ -52,10 +53,7 @@ public class MovementState : MonoBehaviour, IUnitState
     private IMovement currentMovement;
     #endregion
 
-
     #region Logic
-    private void Awake() 
-        => entity = entity == null ? transform.GetChild(0) : entity;
 
     public void EnterState()
     {
