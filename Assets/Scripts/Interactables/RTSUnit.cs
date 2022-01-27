@@ -26,7 +26,7 @@ public class RTSUnit : MonoBehaviour
     {
         if(currentState != null) currentState.ExitState();
         currentState = state;
-        currentState.EnterState();
+        currentState.EnterState(this);
     }
 
     public void SetSelectedActive(bool active) => selectedGameObject.SetActive(active);

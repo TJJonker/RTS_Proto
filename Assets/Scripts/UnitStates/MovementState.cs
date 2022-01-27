@@ -55,7 +55,7 @@ public class MovementState : MonoBehaviour, IUnitState
 
     #region Logic
 
-    public void EnterState()
+    public void EnterState(RTSUnit unit)
     {
         MovementType = movementType;
         spriteScale = transform.localScale;

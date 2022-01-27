@@ -27,6 +27,8 @@ public class InputManager : MonoBehaviour
         {
             selectionStart = Utils.MouseToScreen(Input.mousePosition);
             selectionSquare.SetActive(true);
+
+
         }
 
         // Hold left mouse button

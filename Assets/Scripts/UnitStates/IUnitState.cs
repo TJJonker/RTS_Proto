@@ -1,6 +1,6 @@
 public interface IUnitState
 {
-    public void EnterState();
+    public void EnterState(RTSUnit unit);
 
     public void UpdateState();
 

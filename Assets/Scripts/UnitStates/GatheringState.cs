@@ -1,17 +1,31 @@
-
 public class GatheringState : IUnitState
 {
-    public void EnterState()
+    private IContainer containerObject;
+
+    public void EnterState(RTSUnit unit)
     {
+        // Enabling pickaxe visual
+    }
+
+    public void UpdateState()
+    {
+        Mine()
     }
 
     public void ExitState()
     {
     }
 
-    public void UpdateState()
+    private void Mine()
     {
+        // Start animating unit
     }
+
+    public void Collect()
+    {
+        unit
+    }
+
 
 
 }
