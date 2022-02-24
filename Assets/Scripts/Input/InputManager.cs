@@ -1,53 +1,40 @@
-using System.Collections.Generic;
-using Jonko.Utils;
+using Jonko.Patterns;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
-    [SerializeField] private GameObject selectionSquare;
+    // Instancing Singleton
+    public static InputManager Instance;
 
-    private Vector2 selectionStart;
+    // SerializeFields
+    [SerializeField] public GameObject selectionSquare;     
 
-    private List<RTSUnit> selectedUnits = new List<RTSUnit>();
+    // Input States
+    private IStatePattern InputStateGame = new Input_Game();
+    private IStatePattern InputStateConsole = new Input_Console();
 
-    // Actions
-    private UnitSelection unitSelection = new UnitSelection();
-    private UnitMovement unitMovement = new UnitMovement();
+    // State Variables
+    private IStatePattern currentState;
 
-
-    private void Start()
+    private void Awake()
     {
-        unitMovement.SwitchFormation(unitMovement.circleFormation);
+        Instance = this;
+        SwitchState(InputStateGame);
     }
 
     private void Update()
     {
-        // Click left mouse button
-        if (Input.GetMouseButtonDown(0))
-        {
-            selectionStart = Utils.MouseToScreen(Input.mousePosition);
-            selectionSquare.SetActive(true);
+        currentState.UpdateState();
 
+        if (Input.GetKeyDown(KeyCode.Slash)) 
+            SwitchState(InputStateConsole);
+    }
 
-        }
-
-        // Hold left mouse button
-        if (Input.GetMouseButton(0))
-        {
-            unitSelection.DrawSelectionSquare(selectionSquare, selectionStart, Utils.MouseToScreen(Input.mousePosition));
-            unitSelection.DeselectUnits(selectedUnits);
-            unitSelection.SelectUnits(selectedUnits, selectionStart, Utils.MouseToScreen(Input.mousePosition));
-        }
-
-        // Release left mouse button
-        if (Input.GetMouseButtonUp(0))
-        {
-            selectionSquare.SetActive(false);
-        }
-
-        if (Input.GetMouseButtonDown(1))
-        {
-            unitMovement.MoveUnits(selectedUnits);
-        }
-    }    
+    private void SwitchState(IStatePattern state)
+    {
+        if(currentState != null) currentState.ExitState();
+        currentState = state;
+        Debug.Log("Whew");
+        currentState.EnterState();
+    }
 }
