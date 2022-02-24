@@ -1,6 +1,5 @@
 public class GatheringState : IUnitState
 {
-    private IContainer containerObject;
 
     public void EnterState(RTSUnit unit)
     {
@@ -9,7 +8,7 @@ public class GatheringState : IUnitState
 
     public void UpdateState()
     {
-        Mine()
+        Mine();
     }
 
     public void ExitState()
@@ -23,7 +22,7 @@ public class GatheringState : IUnitState
 
     public void Collect()
     {
-        unit
+        
     }
 
 
