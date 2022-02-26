@@ -15,6 +15,9 @@ public class InputManager : MonoBehaviour
 
     // State Variables
     private IStatePattern currentState;
+    private IStatePattern previousState;
+
+    public IStatePattern GetPreviousState() => previousState;
 
     private void Awake()
     {
@@ -26,15 +29,17 @@ public class InputManager : MonoBehaviour
     {
         currentState.UpdateState();
 
-        if (Input.GetKeyDown(KeyCode.Slash)) 
+        if (Input.GetKeyDown(KeyCode.Slash) && currentState != InputStateConsole) 
             SwitchState(InputStateConsole);
     }
 
-    private void SwitchState(IStatePattern state)
+    public void SwitchState(IStatePattern state)
     {
         if(currentState != null) currentState.ExitState();
+
+        previousState = currentState;
         currentState = state;
-        Debug.Log("Whew");
+
         currentState.EnterState();
     }
 }
