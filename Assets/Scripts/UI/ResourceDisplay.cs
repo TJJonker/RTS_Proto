@@ -10,7 +10,6 @@ public class ResourceDisplay : MonoBehaviour
     private void Awake()
     {
         resourceList = Resources.Load<ResourceListSO>("ResourceList");
-        Debug.Log(resourceList);
         resourceTransformDictionary = new Dictionary<ResourceSO, Transform>();  
 
         InitiateResourceDisplays();

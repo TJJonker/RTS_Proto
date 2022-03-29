@@ -38,7 +38,7 @@ public class HoppingMovement : IMovement
         {
             if (isMoving)
             {
-                rotation = rotation <= 0 ? Random.Range(5, 15) : Random.Range(-15, 5);
+                rotation = rotation <= 0 ? Random.Range(5, 15) : Random.Range(-15, -5);
                 Object.localRotation = Quaternion.Euler(Vector3.forward * rotation);
             }
             else Object.localRotation = Quaternion.Euler(Vector3.forward * 0);
