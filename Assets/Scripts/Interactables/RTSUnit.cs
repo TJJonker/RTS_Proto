@@ -34,6 +34,6 @@ public class RTSUnit : MonoBehaviour
     public void RequestMovement(Vector2 desiredPosition)
     {
         if(currentState != UnitStateMoving) SwitchState(UnitStateMoving);
-        GetComponent<MovementState>().MoveObject(desiredPosition);
+        GetComponent<MovementState>().MoveUnit(desiredPosition);
     }
 }

@@ -73,7 +73,7 @@ public class MovementState : MonoBehaviour, IUnitState
         Rotating = null;
     }
 
-    public void MoveObject(Vector2 desiredPosition)
+    public void MoveUnit(Vector2 desiredPosition)
     {
         if (Moving != null) StopCoroutine(Moving);
         Moving = StartCoroutine(Move(desiredPosition));
@@ -86,7 +86,7 @@ public class MovementState : MonoBehaviour, IUnitState
         direction.Normalize();
 
         // Rotate object if needed
-        RotateObject(direction.x);
+        RotateUnit(direction.x);
 
         // Moving
         while (Vector3.Distance(transform.position, desiredPosition) > destinationThresHold)
@@ -99,7 +99,7 @@ public class MovementState : MonoBehaviour, IUnitState
         Moving = null;
     }
 
-    private void RotateObject(float direction)
+    private void RotateUnit(float direction)
     {
         if (!OppositePositiveNegative(direction, lookingDirection)) return;
         if (Rotating != null) StopCoroutine(Rotating);
