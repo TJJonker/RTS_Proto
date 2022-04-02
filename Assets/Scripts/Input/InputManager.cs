@@ -26,11 +26,12 @@ public class InputManager : MonoBehaviour
     }
 
     private void Update()
+
     {
         currentState.UpdateState();
 
-        if (Input.GetKeyDown(KeyCode.Slash) && currentState != InputStateConsole) 
-            SwitchState(InputStateConsole);
+        //if (Input.GetKeyDown(KeyCode.Slash) && currentState != InputStateConsole) 
+          //  SwitchState(InputStateConsole);
     }
 
     public void SwitchState(IStatePattern state)
