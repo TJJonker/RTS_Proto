@@ -18,8 +18,6 @@ namespace Jonko.Utils
             mouseWorldPosition.z = 0f;
             return mouseWorldPosition;
         }
-<<<<<<< Updated upstream
-=======
 
         /// <summary>
         ///     Logical operator that checks if one of the two float is positive and the other negative
@@ -31,7 +29,6 @@ namespace Jonko.Utils
         {
             return i1 > 0 && i2 < 0 || i1 < 0 && i2 > 0;
         }
->>>>>>> Stashed changes
     }
 
     public class TimeBasedAction

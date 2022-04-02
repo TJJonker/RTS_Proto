@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class HoppingMovement : IMovement
+public class HoppingMovementAnimation : IMovementAnimation
 {
     public float Speed { get; set; }
     public float Height { get; set; }

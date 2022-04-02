@@ -46,11 +46,11 @@ public class MovementState : MonoBehaviour, IUnitState
 
     private Vector3 spriteScale;
 
-    private IMovement hoppingMovement = new HoppingMovement();
-    private IMovement rollingMovement;
-    private IMovement flyingMovement;
+    private IMovementAnimation hoppingMovement = new HoppingMovementAnimation();
+    private IMovementAnimation rollingMovement;
+    private IMovementAnimation flyingMovement;
 
-    private IMovement currentMovement;
+    private IMovementAnimation currentMovement;
     #endregion
 
     #region Logic
@@ -130,7 +130,7 @@ public class MovementState : MonoBehaviour, IUnitState
     #endregion
 
     #region Helper Methods
-    private IMovement MovementTypeToIMovement(EMovementType type)
+    private IMovementAnimation MovementTypeToIMovement(EMovementType type)
     {
         if (type == EMovementType.Hopping) return hoppingMovement;
         if (type == EMovementType.Rolling) return rollingMovement;

@@ -22,7 +22,7 @@ public class UnitMovement
 
         foreach (RTSUnit unit in selectedUnits)
         {
-            unit.RequestMovement(targetPositionList[targetPositionListIndex]);
+            unit.MoveTo(targetPositionList[targetPositionListIndex]);
             targetPositionListIndex = (targetPositionListIndex + 1) % targetPositionList.Count;
         }
     }

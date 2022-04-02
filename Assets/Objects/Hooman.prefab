@@ -174,7 +174,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1220253293337334907}
   - component: {fileID: 1220253293337334908}
-  - component: {fileID: 1220253293337334906}
+  - component: {fileID: 6230921916180914456}
   - component: {fileID: 1220253293337334909}
   m_Layer: 0
   m_Name: Hooman
@@ -212,7 +212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca802157fd6851342a509cafbf5c4d8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1220253293337334906
+--- !u!114 &6230921916180914456
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -221,16 +221,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1220253293337334904}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0d5eaf8a9352144a89ec6749cebde32, type: 3}
+  m_Script: {fileID: 11500000, guid: c54a28bb64c166d448717cd549762f92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entity: {fileID: 1220253294261625256}
+  entity: {fileID: 0}
   movementType: 0
-  destinationThresHold: 0.05
-  movementSpeed: 4
-  timeToRotate: 0.25
-  animationSpeed: 15
-  animationHeight: 0.25
+  destinationThresHold: 0
+  movementSpeed: 0
+  timeToRotate: 1
+  animationSpeed: 0
+  animationHeight: 0
 --- !u!61 &1220253293337334909
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public interface IMovement
+public interface IMovementAnimation
 {
     /// <summary>
     ///     Speed of the movement animation
