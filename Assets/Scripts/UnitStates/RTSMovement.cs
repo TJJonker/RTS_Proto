@@ -56,7 +56,6 @@ public class RTSMovement : MonoBehaviour
     private Coroutine isMoving;
     private Coroutine isRotating;
 
-    private Vector2 desiredPosition, desiredDirection;
 
     #endregion
 

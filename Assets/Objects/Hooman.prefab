@@ -224,13 +224,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c54a28bb64c166d448717cd549762f92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entity: {fileID: 0}
+  entity: {fileID: 1220253294261625256}
   movementType: 0
-  destinationThresHold: 0
-  movementSpeed: 0
-  timeToRotate: 1
-  animationSpeed: 0
-  animationHeight: 0
+  destinationThresHold: 0.025
+  movementSpeed: 3.5
+  timeToRotate: 0.5
+  animationSpeed: 15
+  animationHeight: 0.4
 --- !u!61 &1220253293337334909
 BoxCollider2D:
   m_ObjectHideFlags: 0
