@@ -28,6 +28,7 @@ public class Input_Game : IStatePattern
 
     public void UpdateState()
     {
+        /*
         // Click left mouse button
         if (Input.GetMouseButtonDown(0))
         {
@@ -53,5 +54,6 @@ public class Input_Game : IStatePattern
         {
             unitMovement.MoveUnits(selectedUnits);
         }
+        */
     }
 }

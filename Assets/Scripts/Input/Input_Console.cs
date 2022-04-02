@@ -34,32 +34,6 @@ public class Input_Console : IStatePattern
         else blinkTimer.SetActive(true);
     }
 
-
-    public void ExitState()
-    {
-        background.SetActive(false);
-        textField.gameObject.SetActive(false);
-        blinkTimer.SetActive(false);
-    }
-
-    private void BlinkInputField()
-    {
-        if (!blinkOn) BlinkOn();
-        else BlinkOff();
-    }
-    private void BlinkOn()
-    {
-        inputString += "_";
-        UpdateField(inputString);
-        blinkOn = true;
-    }
-    private void BlinkOff()
-    {
-        inputString = inputString.Substring(0, inputString.Length - 1);
-        UpdateField(inputString);
-        blinkOn = false;
-    }
-
     public void UpdateState()
     {
         GetInput();
@@ -70,25 +44,69 @@ public class Input_Console : IStatePattern
         blinkTimer.UpdateTimer();
     }
 
-    private void GetInput()
+    public void ExitState()
     {
-        var hasInput = false;
-        foreach(char character in Input.inputString)
-        {
-            hasInput = true;
-            if (blinkOn) BlinkOff();
-            UseInput(character);
-        }
-        if (hasInput) UpdateField(inputString);
+        background.SetActive(false);
+        textField.gameObject.SetActive(false);
+        blinkTimer.SetActive(false);
     }
 
-    private void UseInput(char character)
+
+    #region Blinking
+    /// <summary>
+    ///     Function that can be called to toggle the blink
+    /// </summary>
+    private void BlinkInputField()
+    {
+        if (!blinkOn) BlinkOn();
+        else BlinkOff();
+    }
+
+    /// <summary>
+    ///     Turns on the blink effect
+    /// </summary>
+    private void BlinkOn()
+    {
+        inputString += "_";
+        UpdateField(inputString);
+        blinkOn = true;
+    }
+
+    /// <summary>
+    ///     Turns of the blink effect
+    /// </summary>
+    private void BlinkOff()
+    {
+        inputString = inputString.Substring(0, inputString.Length - 1);
+        UpdateField(inputString);
+        blinkOn = false;
+    }
+    #endregion
+
+    /// <summary>
+    ///     Function that checks if there was keyboard input and processes the input.
+    /// </summary>
+    private void GetInput()
+    {
+        // Checks if a key has been pressed
+        foreach(char character in Input.inputString)
+        {
+            if (blinkOn) BlinkOff();
+            ProcessInput(character);
+            UpdateField(inputString);
+        }
+    }
+
+    /// <summary>
+    ///     Function that checks if special or normal keys are pressed and acts accordingly
+    /// </summary>
+    /// <param name="character"> Character that is pressed </param>
+    private void ProcessInput(char character)
     {
         // Backspace is getting pressed
         if(character == '\b'){
-            if (inputString.Length > 0){
+            if (inputString.Length > 0)
                 inputString = inputString.Substring(0, inputString.Length - 1);
-            }
             return;
         }
         // Enter or Return is getting pressed
@@ -101,12 +119,20 @@ public class Input_Console : IStatePattern
         inputString += character;
     }
 
-    private void UpdateField(string str) => textField.SetText(textPreset + str);
+    /// <summary>
+    ///     Updates the text object on the screen
+    /// </summary>
+    /// <param name="str"> String that should be displayed </param>
+    private void UpdateField(string str) 
+        => textField.SetText(textPreset + str);
 
+    /// <summary>
+    ///     Runs the command that's currently in the field
+    /// </summary>
+    /// <param name="command"> the command string </param>
+    /// <param name="resetString"> Whether the command field should be reset </param>
     private void RunCommand(string command, bool resetString = false)
     {
-
-
         if (resetString) inputString = "";
         ExitConsole();
     }

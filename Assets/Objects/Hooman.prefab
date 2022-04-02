@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1220253293247196246}
   - component: {fileID: 1220253293247196233}
   m_Layer: 0
-  m_Name: Shadow
+  m_Name: shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 1220253293276129506}
   - component: {fileID: 1220253293276129509}
   m_Layer: 0
-  m_Name: Selection
+  m_Name: selection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -268,7 +268,7 @@ GameObject:
   - component: {fileID: 1220253294261625256}
   - component: {fileID: 1220253294261625259}
   m_Layer: 0
-  m_Name: Hooman Sprite
+  m_Name: sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
