@@ -1,46 +1,70 @@
-using Jonko.Patterns;
+using RTS.Input;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour
 {
-    // Instancing Singleton
     public static InputManager Instance;
 
-    // SerializeFields
-    [SerializeField] public GameObject selectionSquare;     
+    public PlayerInputActionMaps PlayerInputActionMap { get; private set; }
 
-    // Input States
-    private IStatePattern InputStateGame = new Input_Game();
-    private IStatePattern InputStateConsole = new Input_Console();
-
-    // State Variables
-    private IStatePattern currentState;
-    private IStatePattern previousState;
-
-    public IStatePattern GetPreviousState() => previousState;
+    private List<InputActionMap> activeActionMaps;
+    private List<InputActionMap> previousActiveActionMaps;
 
     private void Awake()
     {
-        Instance = this;
-        SwitchState(InputStateGame);
+        Instance = this;    
+        PlayerInputActionMap = new PlayerInputActionMaps();
+        activeActionMaps = new List<InputActionMap>();
+        previousActiveActionMaps = new List<InputActionMap>();  
     }
 
-    private void Update()
-
+    private void Start()
     {
-        currentState.UpdateState();
-
-        //if (Input.GetKeyDown(KeyCode.Slash) && currentState != InputStateConsole) 
-          //  SwitchState(InputStateConsole);
+        SwitchActionMap(PlayerInputActionMap.Gameplay);
     }
 
-    public void SwitchState(IStatePattern state)
+    public void SwitchActionMap(InputActionMap actionMap)
     {
-        if(currentState != null) currentState.ExitState();
+        previousActiveActionMaps = new List<InputActionMap>(activeActionMaps);
+        DisableAllActionMaps();        
+        EnableActionMap(actionMap);
+    }
 
-        previousState = currentState;
-        currentState = state;
+    public void EnableActionMap(InputActionMap actionMap)
+    {
+        actionMap.Enable();
+        activeActionMaps.Add(actionMap);
+    }
 
-        currentState.EnterState();
+    public void DisableActionMap(InputActionMap actionMap)
+    {
+        if (!activeActionMaps.Contains(actionMap)) return;
+        actionMap.Disable();    
+        activeActionMaps.Remove(actionMap);
+    }
+
+    public void DisableAllActionMaps()
+    {
+        PlayerInputActionMap.Disable();
+        activeActionMaps.Clear();
+    }
+
+    public void SwitchToPreviousActionMap()
+    {
+        DisableAllActionMaps();
+        
+        foreach (InputActionMap actionMap in previousActiveActionMaps)
+          EnableActionMap(actionMap);
+        
+
+    }
+
+    public void PrintCurrentActionMaps()
+    {
+        if (activeActionMaps.Count == 0) Debug.Log("Empty");
+        foreach (InputActionMap inputMap in activeActionMaps)
+            Debug.Log(inputMap);
     }
 }

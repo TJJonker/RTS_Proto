@@ -6,7 +6,7 @@
             "id": "466a91ef-07cc-47c2-a50d-148f7b240da0",
             "actions": [
                 {
-                    "name": "New action",
+                    "name": "Open Console",
                     "type": "Button",
                     "id": "790354b6-4d38-4add-94f2-9686c5a853d5",
                     "expectedControlType": "Button",
@@ -19,11 +19,11 @@
                 {
                     "name": "",
                     "id": "e719103f-197c-4630-af4d-db363f93b303",
-                    "path": "",
+                    "path": "<Keyboard>/slash",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "New action",
+                    "action": "Open Console",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -34,9 +34,18 @@
             "id": "8c844925-9c93-4c71-bb3b-940dd216f61d",
             "actions": [
                 {
-                    "name": "New action",
+                    "name": "Submit",
                     "type": "Button",
                     "id": "ee31e101-30fe-4f3e-a26f-09a32d0068a1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Exit",
+                    "type": "Button",
+                    "id": "efdfe22c-9517-4716-a46a-e6d3baa01c68",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -47,11 +56,22 @@
                 {
                     "name": "",
                     "id": "a9dea757-f97f-4421-88fa-6db36a50d5e4",
-                    "path": "",
+                    "path": "<Keyboard>/numpadEnter",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "New action",
+                    "action": "Submit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8dd209ab-db91-4f89-beb6-96b3ee50e412",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Exit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

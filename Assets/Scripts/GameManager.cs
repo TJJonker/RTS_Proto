@@ -1,5 +1,4 @@
 using Jonko.FunctionTimer;
-using Jonko.Utils;
 using RTS.TaskSystem;
 using UnityEngine;
 
@@ -25,10 +24,10 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(1))
-        {
+        //if (Input.GetMouseButtonDown(1))
+        //{
             //TaskSystem.Task task = new TaskSystem.Task { targetPosition = Mouse}
-        }
+        //}
     }
 
     /// <summary>

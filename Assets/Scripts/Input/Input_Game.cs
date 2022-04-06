@@ -1,5 +1,4 @@
 using Jonko.Patterns;
-using Jonko.Utils;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,7 +17,7 @@ public class Input_Game : IStatePattern
     public void EnterState()
     {
         unitMovement.SwitchFormation(unitMovement.circleFormation);
-        this.selectionSquare = InputManager.Instance.selectionSquare;
+        //this.selectionSquare = InputManager.Instance.selectionSquare;
     }
 
     public void ExitState()
