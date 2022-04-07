@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,9 +6,23 @@ namespace RTS.TaskSystem
 {
     public class TaskSystem
     {
-        public class Task
+        public abstract class Task
         {
-            public Vector3 targetPosition;
+            public class MoveToPosition : Task
+            {
+                public Vector3 targetPosition;
+            }
+
+            public class Victory : Task
+            {
+
+            }
+
+            public class BloodCleanUp : Task
+            {
+                public Vector3 targetPosition;
+                public Action cleanUpAction;
+            }
         }
 
         private List<Task> taskList;

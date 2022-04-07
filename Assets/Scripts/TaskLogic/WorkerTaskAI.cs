@@ -59,19 +59,40 @@ namespace RTS.TaskSystem
             else
             {
                 State = WorkerState.ExecutingTask;
-                ExecuteTask(task);
+                if(task is TaskSystem.Task.MoveToPosition)
+                    ExecuteTask_MoveToPosition(task as TaskSystem.Task.MoveToPosition);
+                if (task is TaskSystem.Task.Victory)
+                    ExecuteTask_Victory(task as TaskSystem.Task.Victory);
+                if (task is TaskSystem.Task.BloodCleanUp)
+                    ExecuteTask_BloodCleanUp(task as TaskSystem.Task.BloodCleanUp);
             }
         }
 
         /// <summary>
         ///     Function that makes sure the given task will be executed.
         /// </summary>
-        /// <param name="task"> The task that should be executed. </param>
-        private void ExecuteTask(TaskSystem.Task task)
+        /// <param name="MoveToPositionTask"> The task that should be executed. </param>
+        private void ExecuteTask_MoveToPosition(TaskSystem.Task.MoveToPosition MoveToPositionTask)
         {
-            worker.MoveTo(task.targetPosition, () => State = WorkerState.WaitingForNextTask);
+            worker.MoveTo(MoveToPositionTask.targetPosition, () => State = WorkerState.WaitingForNextTask);
         }
 
+        private void ExecuteTask_Victory(TaskSystem.Task.Victory victory)
+        {
+            worker.VictoryDance(() => State = WorkerState.WaitingForNextTask); 
+        }
+
+        private void ExecuteTask_BloodCleanUp(TaskSystem.Task.BloodCleanUp bloodCleanUp)
+        {
+            worker.MoveTo(bloodCleanUp.targetPosition, () =>
+            {
+                worker.VictoryDance(() =>
+                {
+                    bloodCleanUp.cleanUpAction();
+                    State = WorkerState.WaitingForNextTask;
+                });
+            });
+        }
 
     }
 }

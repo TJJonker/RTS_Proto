@@ -114,16 +114,16 @@ public class RTSMovement : MonoBehaviour
     /// <summary>
     ///     Used to trigger the rotation coroutine.
     /// </summary>
-    public void Rotate()
+    public void Rotate(Action actionWhenFinished = null)
     {
         if (isRotating != null) StopCoroutine(isRotating);
-        isRotating = StartCoroutine(CRotate());
+        isRotating = StartCoroutine(CRotate(actionWhenFinished));
     }
 
     /// <summary>
     ///     Coroutine to make the sprite rotate over a set amount of time.
     /// </summary>
-    private IEnumerator CRotate()
+    private IEnumerator CRotate(Action actionWhenFinished = null)
     {
         lookingDirection = -lookingDirection;
         // Preparing scaling variables
@@ -141,6 +141,7 @@ public class RTSMovement : MonoBehaviour
             yield return null;
         }
 
+        if(actionWhenFinished != null) actionWhenFinished();
         isRotating = null;
     }
     #endregion

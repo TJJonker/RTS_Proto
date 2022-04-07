@@ -7,25 +7,31 @@ using UnityEngine.InputSystem;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject RTSUnit;
+    [SerializeField] private Sprite bloodSprite;
+
     private TaskSystem taskSystem = new TaskSystem();
 
     private void Start()
     {
         SpawnWorker(new Vector2(0, 0));
-        SpawnWorker(new Vector2(1, 1));
-
-        FunctionTimer.Create(() =>
-        {
-            TaskSystem.Task task = new TaskSystem.Task { targetPosition = new Vector2(3, 2) };
-            taskSystem.AddTask(task);
-        }, 2f);
+        //SpawnWorker(new Vector2(1, 1));
     }
 
     private void Update()
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            TaskSystem.Task task = new TaskSystem.Task { targetPosition = Utils.MouseToScreen(Mouse.current.position.ReadValue()) };
+            GameObject blood = SpawnBlood(Utils.MouseToScreen(Mouse.current.position.ReadValue()));
+            TaskSystem.Task.BloodCleanUp task = new TaskSystem.Task.BloodCleanUp {
+                targetPosition = blood.transform.position,
+                cleanUpAction = () => Object.Destroy(blood.gameObject)                
+            };
+            taskSystem.AddTask(task);   
+        }
+
+        if (Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            TaskSystem.Task task = new TaskSystem.Task.Victory();
             taskSystem.AddTask(task);
         }
     }
@@ -49,5 +55,13 @@ public class GameManager : MonoBehaviour
         WorkerTaskAI workerTaskAI = unit.AddComponent<WorkerTaskAI>();
         workerTaskAI.Setup(unit.GetComponent<RTSUnit>(), taskSystem);
         return unit;
+    }
+
+    public GameObject SpawnBlood(Vector2 position)
+    {
+        GameObject gameObject = new GameObject("BloodSplatter", typeof(SpriteRenderer));
+        gameObject.GetComponent<SpriteRenderer>().sprite = bloodSprite;
+        gameObject.transform.position = position;   
+        return gameObject;
     }
 }

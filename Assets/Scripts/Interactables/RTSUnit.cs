@@ -25,4 +25,6 @@ public class RTSUnit : MonoBehaviour
     /// </summary>
     /// <param name="desiredPosition"> the desired position to move the unit to </param>
     public void MoveTo(Vector2 desiredPosition, Action action = null) => movement.MoveTo(desiredPosition, action);
+
+    public void VictoryDance(Action action = null) => movement.Rotate(action);
 }
