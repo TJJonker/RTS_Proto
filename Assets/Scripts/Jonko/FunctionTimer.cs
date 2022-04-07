@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Jonko.FunctionTimer
+namespace Jonko.Timers
 {
 
     public class FunctionTimer
     {
 
-        private static MonoBehaviourHook monoGameObject;
+        private static MonoBehaviourHookFunctionTimer monoGameObject;
 
         /// <summary>
         ///     Creates a timer that runs an action once after a set amount of time or runs an unlimited amount of times with the given interval.
@@ -45,15 +45,13 @@ namespace Jonko.FunctionTimer
         /// <summary>
         ///     Object made to make use of the mono behaviour
         /// </summary>
-        private class MonoBehaviourHook : MonoBehaviour
+        private class MonoBehaviourHookFunctionTimer : MonoBehaviour
         {
             private List<FunctionTimer> activeTimerList;
-            private List<FunctionTimer> pausedTimerList;
 
-            public MonoBehaviourHook()
+            public MonoBehaviourHookFunctionTimer()
             {
-                activeTimerList = new List<FunctionTimer>();
-                pausedTimerList = new List<FunctionTimer>();    
+                activeTimerList = new List<FunctionTimer>();  
             }
 
             private void Update()
@@ -75,32 +73,6 @@ namespace Jonko.FunctionTimer
             /// <param name="timer"> timer to remove </param>
             public void RemoveTimer(FunctionTimer timer) 
                 => activeTimerList.Remove(timer);
-
-            /// <summary>
-            ///     Pauses a timer from the 'active' list
-            /// </summary>
-            /// <param name="timer"> Timer to pause </param>
-            public void PauseTimer(FunctionTimer timer)
-            {
-                if (activeTimerList.Contains(timer))
-                {
-                    activeTimerList.Remove(timer);
-                    pausedTimerList.Add(timer);
-                }
-            }
-
-            /// <summary>
-            ///     Moves a timer from the 'paused' list to the 'active' list
-            /// </summary>
-            /// <param name="timer"> Timer to unpause </param>
-            public void UnpauseTimer(FunctionTimer timer)
-            {
-                if (pausedTimerList.Contains(timer))
-                {
-                    pausedTimerList.Remove(timer);
-                    activeTimerList.Add(timer);
-                }
-            }
         }
 
         /// <summary>
@@ -110,8 +82,8 @@ namespace Jonko.FunctionTimer
         {
             if (monoGameObject == null)
             {
-                GameObject gameObject = new GameObject("FunctionOnTimer");
-                monoGameObject = gameObject.AddComponent<MonoBehaviourHook>();
+                GameObject gameObject = new GameObject("FunctionTimerObject");
+                monoGameObject = gameObject.AddComponent<MonoBehaviourHookFunctionTimer>();
             }
         }
 
@@ -123,6 +95,7 @@ namespace Jonko.FunctionTimer
         private Action action;
         private float timer, timerMax;
         private float amountOfRepeats;
+        private bool isPaused;
 
         private FunctionTimer(Action action, float timer, float amountOfRepeats)
         {
@@ -134,6 +107,7 @@ namespace Jonko.FunctionTimer
 
         public void Update()
         {
+            if (isPaused) return;
             timer -= Time.deltaTime;
             if (timer < 0)
             {
@@ -152,10 +126,10 @@ namespace Jonko.FunctionTimer
         /// <summary>
         ///     Pauses the timer
         /// </summary>
-        public void Pause() => monoGameObject.PauseTimer(this);
+        public void Pause() => isPaused = true;
         /// <summary>
         ///     Unpauses the timer
         /// </summary>
-        public void Unpause() => monoGameObject.UnpauseTimer(this);
+        public void Unpause() => isPaused = false;
     }
 }
