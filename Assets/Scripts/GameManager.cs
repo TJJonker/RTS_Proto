@@ -14,7 +14,8 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         SpawnWorker(new Vector2(0, 0));
-        //SpawnWorker(new Vector2(1, 1));
+        SpawnWorker(new Vector2(1, 1));
+        SpawnWorker(new Vector2(1.5f, 1));
 
     }
 
@@ -23,9 +24,20 @@ public class GameManager : MonoBehaviour
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             GameObject blood = SpawnBlood(Utils.MouseToScreen(Mouse.current.position.ReadValue()));
+            SpriteRenderer spriteRenderer = blood.GetComponent<SpriteRenderer>();
             TaskSystem.Task.BloodCleanUp task = new TaskSystem.Task.BloodCleanUp {
                 targetPosition = blood.transform.position,
-                cleanUpAction = () => Object.Destroy(blood.gameObject)                
+                cleanUpAction = () =>
+                {
+                    float alpha = 1f;
+                    FunctionUpdater.Create(() =>
+                    {
+                        alpha -= Time.deltaTime;
+                        spriteRenderer.color = new Color(1f, 1f, 1f, alpha);
+                        if (alpha <= 0f) return true;
+                        else return false;
+                    });
+                }   
             };
             taskSystem.AddTask(task);   
         }
