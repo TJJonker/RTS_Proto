@@ -1,33 +1,33 @@
 using Jonko.FunctionTimer;
+using Jonko.Utils;
 using RTS.TaskSystem;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject RTSUnit;
+    private TaskSystem taskSystem = new TaskSystem();
 
     private void Start()
     {
-        TaskSystem taskSystem = new TaskSystem();
-
-        GameObject unit = SpawnRTSUnit(new Vector2(0, 0));
-
-        WorkerTaskAI workerTaskAI = unit.AddComponent<WorkerTaskAI>();
-        workerTaskAI.Setup(unit.GetComponent<RTSUnit>(), taskSystem);
+        SpawnWorker(new Vector2(0, 0));
+        SpawnWorker(new Vector2(1, 1));
 
         FunctionTimer.Create(() =>
         {
             TaskSystem.Task task = new TaskSystem.Task { targetPosition = new Vector2(3, 2) };
             taskSystem.AddTask(task);
-        }, 3f);
+        }, 2f);
     }
 
     private void Update()
     {
-        //if (Input.GetMouseButtonDown(1))
-        //{
-            //TaskSystem.Task task = new TaskSystem.Task { targetPosition = Mouse}
-        //}
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            TaskSystem.Task task = new TaskSystem.Task { targetPosition = Utils.MouseToScreen(Mouse.current.position.ReadValue()) };
+            taskSystem.AddTask(task);
+        }
     }
 
     /// <summary>
@@ -39,6 +39,15 @@ public class GameManager : MonoBehaviour
     {
         GameObject unit = Instantiate(RTSUnit);
         unit.transform.position = position;
+        return unit;
+    }
+
+    public GameObject SpawnWorker(Vector2 position)
+    {
+        GameObject unit = SpawnRTSUnit(position);
+
+        WorkerTaskAI workerTaskAI = unit.AddComponent<WorkerTaskAI>();
+        workerTaskAI.Setup(unit.GetComponent<RTSUnit>(), taskSystem);
         return unit;
     }
 }

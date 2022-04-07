@@ -1,5 +1,5 @@
-using System;
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
 
 namespace Jonko.Utils
 {
@@ -18,7 +18,10 @@ namespace Jonko.Utils
             mouseWorldPosition.z = 0f;
             return mouseWorldPosition;
         }
+    }
 
+    public static class Logic
+    {
         /// <summary>
         ///     Logical operator that checks if one of the two float is positive and the other negative
         /// </summary>
@@ -30,42 +33,4 @@ namespace Jonko.Utils
             return i1 > 0 && i2 < 0 || i1 < 0 && i2 > 0;
         }
     }
-
-    public class TimeBasedAction
-    {
-        private Action action;
-        private float timer;
-        private float timerMax;
-        private bool repeat;
-        private bool isActive;
-
-        public TimeBasedAction(Action action, float timerMax, bool repeat = false)
-        {
-            this.action = action;
-            this.timerMax = timerMax;
-            this.repeat = repeat;
-
-            timer = timerMax;
-            isActive = true;
-        }
-
-        public void UpdateTimer()
-        {
-            if (!isActive) return;
-            timer -= Time.deltaTime;
-            Debug.Log(timer);
-            if(timer <= 0f)
-            {
-                action.Invoke();
-                if(repeat) timer += timerMax;
-            }
-        }
-
-        public void SetActive(bool active) => isActive = active;
-
-
-
-
-    }
-
 }

@@ -93,7 +93,7 @@ public class RTSMovement : MonoBehaviour
         var desiredDirection = (desiredPosition - (Vector2)transform.position).normalized;
 
         // Check if rotation is needed
-        if (Utils.OppositePositiveNegative(desiredDirection.x, lookingDirection))
+        if (Logic.OppositePositiveNegative(desiredDirection.x, lookingDirection))
             Rotate();
 
         // Check if position is reached and move towards that point

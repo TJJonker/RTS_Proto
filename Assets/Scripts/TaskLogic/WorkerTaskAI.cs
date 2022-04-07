@@ -19,7 +19,7 @@ namespace RTS.TaskSystem
             get => state;
             set
             {
-                if(state == WorkerState.WaitingForNextTask)
+                if(value == WorkerState.WaitingForNextTask)
                     timer.Unpause();
                 else timer.Pause();
                 state = value;
@@ -58,7 +58,7 @@ namespace RTS.TaskSystem
             }
             else
             {
-                state = WorkerState.ExecutingTask;
+                State = WorkerState.ExecutingTask;
                 ExecuteTask(task);
             }
         }
@@ -69,7 +69,9 @@ namespace RTS.TaskSystem
         /// <param name="task"> The task that should be executed. </param>
         private void ExecuteTask(TaskSystem.Task task)
         {
-            worker.MoveTo(task.targetPosition, () => state = WorkerState.WaitingForNextTask);
+            worker.MoveTo(task.targetPosition, () => State = WorkerState.WaitingForNextTask);
         }
+
+
     }
 }
