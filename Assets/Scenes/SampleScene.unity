@@ -954,6 +954,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RTSUnit: {fileID: 1220253293337334904, guid: fcbf8ee399639f543bcd6127ffb7b22a, type: 3}
   bloodSprite: {fileID: 21300000, guid: 534536b8fed1d044997606570eb4b274, type: 3}
+  stoneSprite: {fileID: 0}
+  pixelSprite: {fileID: 0}
 --- !u!114 &1205641268
 MonoBehaviour:
   m_ObjectHideFlags: 0

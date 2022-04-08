@@ -8,14 +8,18 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject RTSUnit;
     [SerializeField] private Sprite bloodSprite;
+    [SerializeField] private Sprite stoneSprite;
+    [SerializeField] private Sprite pixelSprite;
 
-    private TaskSystem taskSystem = new TaskSystem();
+    private TaskSystem taskSystem;
 
     private void Start()
     {
+        taskSystem = new TaskSystem();
+
         SpawnWorker(new Vector2(0, 0));
-        SpawnWorker(new Vector2(1, 1));
-        SpawnWorker(new Vector2(1.5f, 1));
+        //SpawnWorker(new Vector2(1, 1));
+        //SpawnWorker(new Vector2(1.5f, 1));
 
     }
 
@@ -25,23 +29,33 @@ public class GameManager : MonoBehaviour
         {
             GameObject blood = SpawnBlood(Utils.MouseToScreen(Mouse.current.position.ReadValue()));
             SpriteRenderer spriteRenderer = blood.GetComponent<SpriteRenderer>();
-            TaskSystem.Task.BloodCleanUp task = new TaskSystem.Task.BloodCleanUp {
-                targetPosition = blood.transform.position,
-                cleanUpAction = () =>
-                {
-                    float alpha = 1f;
-                    FunctionUpdater.Create(() =>
-                    {
-                        alpha -= Time.deltaTime;
-                        spriteRenderer.color = new Color(1f, 1f, 1f, alpha);
-                        if (alpha <= 0f) return true;
-                        else return false;
-                    });
-                }   
-            };
-            taskSystem.AddTask(task);   
-        }
 
+            float waitTime = Time.time;
+            taskSystem.EnqueueTask(() =>
+            {
+                if (Time.time >= waitTime)
+                {
+                    TaskSystem.Task.BloodCleanUp task = new TaskSystem.Task.BloodCleanUp
+                    {
+                        targetPosition = blood.transform.position,
+                        cleanUpAction = () =>
+                        {
+                            float alpha = 1f;
+                            FunctionUpdater.Create(() =>
+                            {
+                                alpha -= Time.deltaTime;
+                                spriteRenderer.color = new Color(1f, 1f, 1f, alpha);
+                                if (alpha <= 0f) return true;
+                                else return false;
+                            });
+                        }
+                    };
+                    return task;
+                }
+                else return null;
+            });
+        }
+        
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
             TaskSystem.Task task = new TaskSystem.Task.Victory();
@@ -75,6 +89,23 @@ public class GameManager : MonoBehaviour
         GameObject gameObject = new GameObject("BloodSplatter", typeof(SpriteRenderer));
         gameObject.GetComponent<SpriteRenderer>().sprite = bloodSprite;
         gameObject.transform.position = position;   
+        return gameObject;
+    }
+
+    private GameObject SpawnStoneSprite(Vector2 position)
+    {
+        GameObject gameObject = new GameObject("StoneSprite", typeof(SpriteRenderer));
+        gameObject.GetComponent<SpriteRenderer>().sprite = stoneSprite;
+        gameObject.transform.position = position;
+        return gameObject;
+    }
+
+    private GameObject SpawnStoneSlot(Vector2 position)
+    {
+        GameObject gameObject = new GameObject("StoneSlot", typeof(SpriteRenderer));
+        gameObject.GetComponent<SpriteRenderer>().sprite = pixelSprite;
+        gameObject.transform.position = position;
+        gameObject.transform.localScale = new Vector3(3, 3);
         return gameObject;
     }
 }
