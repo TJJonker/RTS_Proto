@@ -63,7 +63,7 @@ public class RTSMovement : MonoBehaviour
     private void Start()
     {
         MovementType = movementType;
-        spriteScale = transform.localScale;
+        spriteScale = entity.transform.localScale;
     }
 
     private void Update() 
@@ -105,8 +105,8 @@ public class RTSMovement : MonoBehaviour
         
         // Change variables when point is reached
         transform.position = desiredPosition;
-        actionWhenFinished();
         isMoving = null;
+        actionWhenFinished();
     }
     #endregion
 
@@ -127,7 +127,7 @@ public class RTSMovement : MonoBehaviour
     {
         lookingDirection = -lookingDirection;
         // Preparing scaling variables
-        var originalScale = transform.localScale;
+        var originalScale = entity.transform.localScale;
         var desiredScale = spriteScale;
         desiredScale.x *= lookingDirection;
         // Saving starting time
@@ -137,12 +137,12 @@ public class RTSMovement : MonoBehaviour
         while (fracComplete < 1)
         {
             fracComplete = (Time.time - startTime) / timeToRotate;
-            transform.localScale = Vector3.Slerp(originalScale, desiredScale, fracComplete);
+            entity.transform.localScale = Vector3.Slerp(originalScale, desiredScale, fracComplete);
             yield return null;
         }
 
-        if(actionWhenFinished != null) actionWhenFinished();
         isRotating = null;
+        if(actionWhenFinished != null) actionWhenFinished();
     }
     #endregion
 

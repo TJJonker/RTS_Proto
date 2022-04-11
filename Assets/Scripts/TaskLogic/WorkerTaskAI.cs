@@ -28,7 +28,7 @@ namespace RTS.TaskSystem
         private WorkerState state;
 
         private RTSUnit worker;
-        private TaskSystem taskSystem;
+        private TaskSystem<GameManager.Task> taskSystem;
         private FunctionTimer timer;
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace RTS.TaskSystem
         /// </summary>
         /// <param name="worker"> The RTSUnit of the worker </param>
         /// <param name="taskSystem"> The task system responsible for the tasks </param>
-        public void Setup(RTSUnit worker, TaskSystem taskSystem)
+        public void Setup(RTSUnit worker, TaskSystem<GameManager.Task> taskSystem)
         {
             this.worker = worker;
             this.taskSystem = taskSystem;
@@ -50,7 +50,7 @@ namespace RTS.TaskSystem
         /// </summary>
         private void RequestNextTask()
         {
-            TaskSystem.Task task = taskSystem.RequestNextTask();
+            GameManager.Task task = taskSystem.RequestNextTask();
 
             if (task == null)
             {
@@ -59,12 +59,14 @@ namespace RTS.TaskSystem
             else
             {
                 State = WorkerState.ExecutingTask;
-                if(task is TaskSystem.Task.MoveToPosition)
-                    ExecuteTask_MoveToPosition(task as TaskSystem.Task.MoveToPosition);
-                if (task is TaskSystem.Task.Victory)
-                    ExecuteTask_Victory(task as TaskSystem.Task.Victory);
-                if (task is TaskSystem.Task.BloodCleanUp)
-                    ExecuteTask_BloodCleanUp(task as TaskSystem.Task.BloodCleanUp);
+                if(task is GameManager.Task.MoveToPosition)
+                    ExecuteTask_MoveToPosition(task as GameManager.Task.MoveToPosition);
+                if (task is GameManager.Task.Victory)
+                    ExecuteTask_Victory(task as GameManager.Task.Victory);
+                if (task is GameManager.Task.BloodCleanUp)
+                    ExecuteTask_BloodCleanUp(task as GameManager.Task.BloodCleanUp);
+                if (task is GameManager.Task.TakeStoneToStoneSlot)
+                    ExecuteTask_TakeStoneToStoneSlot(task as GameManager.Task.TakeStoneToStoneSlot);
             }
         }
 
@@ -72,17 +74,17 @@ namespace RTS.TaskSystem
         ///     Function that makes sure the given task will be executed.
         /// </summary>
         /// <param name="MoveToPositionTask"> The task that should be executed. </param>
-        private void ExecuteTask_MoveToPosition(TaskSystem.Task.MoveToPosition MoveToPositionTask)
+        private void ExecuteTask_MoveToPosition(GameManager.Task.MoveToPosition MoveToPositionTask)
         {
             worker.MoveTo(MoveToPositionTask.targetPosition, () => State = WorkerState.WaitingForNextTask);
         }
 
-        private void ExecuteTask_Victory(TaskSystem.Task.Victory victory)
+        private void ExecuteTask_Victory(GameManager.Task.Victory victory)
         {
             worker.VictoryDance(() => State = WorkerState.WaitingForNextTask); 
         }
 
-        private void ExecuteTask_BloodCleanUp(TaskSystem.Task.BloodCleanUp bloodCleanUp)
+        private void ExecuteTask_BloodCleanUp(GameManager.Task.BloodCleanUp bloodCleanUp)
         {
             worker.MoveTo(bloodCleanUp.targetPosition, () =>
             {
@@ -94,5 +96,17 @@ namespace RTS.TaskSystem
             });
         }
 
+        private void ExecuteTask_TakeStoneToStoneSlot(GameManager.Task.TakeStoneToStoneSlot takeToStoneSlotTask)
+        {
+            worker.MoveTo(takeToStoneSlotTask.stonePosition, () =>
+            {
+                takeToStoneSlotTask.grabStone(this);
+                worker.MoveTo(takeToStoneSlotTask.stoneSlotPosition, () =>
+                {
+                    takeToStoneSlotTask.dropStone();
+                    State = WorkerState.WaitingForNextTask;
+                });
+            });
+        }
     }
 }

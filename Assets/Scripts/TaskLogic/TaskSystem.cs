@@ -1,50 +1,19 @@
 using Jonko.Timers;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace RTS.TaskSystem 
 {
-    public class TaskSystem
+    public class TaskSystem<TTask> where TTask : TaskBase
     {
-        public abstract class Task
-        {
-            public class MoveToPosition : Task
-            {
-                public Vector3 targetPosition;
-            }
 
-            public class Victory : Task
-            {
-
-            }
-
-            public class BloodCleanUp : Task
-            {
-                public Vector3 targetPosition;
-                public Action cleanUpAction;
-            }
-        }
-
-        public class QueuedTask
-        {
-            private Func<Task> tryGetTaskFunc;
-
-            public QueuedTask(Func<Task> tryGetTaskFunc)
-            {
-                this.tryGetTaskFunc = tryGetTaskFunc;
-            }
-
-            public Task TryDequeueTask() => tryGetTaskFunc();
-        }
-
-        private List<Task> taskList;
-        private List<QueuedTask> queuedTaskList;   
+        private List<TTask> taskList;
+        private List<QueuedTask<TTask>> queuedTaskList;   
 
         public TaskSystem()
         {
-            taskList = new List<Task>();
-            queuedTaskList = new List<QueuedTask>();
+            taskList = new List<TTask>();
+            queuedTaskList = new List<QueuedTask<TTask>>();
             FunctionTimer.Create(DequeueTasks, .2f, true);
         }
 
@@ -52,11 +21,11 @@ namespace RTS.TaskSystem
         ///     Requests next task in the task list.
         /// </summary>
         /// <returns> Requested task </returns>
-        public Task RequestNextTask()
+        public TTask RequestNextTask()
         {
             if (taskList.Count > 0)
             {
-                Task task = taskList[0];
+                TTask task = taskList[0];
                 taskList.RemoveAt(0);
                 return task;
             }
@@ -67,12 +36,12 @@ namespace RTS.TaskSystem
         ///     Adds a task to the task list.
         /// </summary>
         /// <param name="task"> Task to add </param>
-        public void AddTask(Task task) => taskList.Add(task);
+        public void AddTask(TTask task) => taskList.Add(task);
 
-        public void EnqueueTask(QueuedTask queuedTask) => queuedTaskList.Add(queuedTask);
-        public void EnqueueTask(Func<Task> tryGetTaskFunc)
+        public void EnqueueTask(QueuedTask<TTask> queuedTask) => queuedTaskList.Add(queuedTask);
+        public void EnqueueTask(Func<TTask> tryGetTaskFunc)
         {
-            QueuedTask queuedTask = new QueuedTask(tryGetTaskFunc);
+            QueuedTask<TTask> queuedTask = new QueuedTask<TTask>(tryGetTaskFunc);
             queuedTaskList.Add(queuedTask);
         }
 
@@ -80,8 +49,8 @@ namespace RTS.TaskSystem
         {
             for(int i = 0; i < queuedTaskList.Count; i++)  
             {
-                QueuedTask queuedTask = queuedTaskList[i];
-                Task task = queuedTask.TryDequeueTask();
+                QueuedTask<TTask> queuedTask = queuedTaskList[i];
+                TTask task = queuedTask.TryDequeueTask();
                 if (task != null)
                 {
                     AddTask(task);
@@ -90,5 +59,17 @@ namespace RTS.TaskSystem
                 }
             }
         }
+    }
+
+    public abstract class TaskBase { }
+
+    public class QueuedTask<TTask> where TTask : TaskBase
+    {
+        private Func<TTask> tryGetTaskFunc;
+
+        public QueuedTask(Func<TTask> tryGetTaskFunc)
+            => this.tryGetTaskFunc = tryGetTaskFunc;
+
+        public TTask TryDequeueTask() => tryGetTaskFunc();
     }
 }

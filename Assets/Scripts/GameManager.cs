@@ -1,6 +1,7 @@
 using Jonko.Timers;
 using Jonko.Utils;
 using RTS.TaskSystem;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,43 +12,44 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Sprite stoneSprite;
     [SerializeField] private Sprite pixelSprite;
 
-    private TaskSystem taskSystem;
+    private TaskSystem<Task> taskSystem;
+
+    private StoneSlot stoneSlot;
 
     private void Start()
     {
-        taskSystem = new TaskSystem();
+        taskSystem = new TaskSystem<Task>();
 
         SpawnWorker(new Vector2(0, 0));
         //SpawnWorker(new Vector2(1, 1));
         //SpawnWorker(new Vector2(1.5f, 1));
 
+        GameObject stoneSlotGameObject = SpawnStoneSlot(new Vector2(4, 2));
+        stoneSlot = new StoneSlot(stoneSlotGameObject.transform);
     }
 
     private void Update()
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            GameObject blood = SpawnBlood(Utils.MouseToScreen(Mouse.current.position.ReadValue()));
-            SpriteRenderer spriteRenderer = blood.GetComponent<SpriteRenderer>();
-
-            float waitTime = Time.time;
+            GameObject stoneGameObject = SpawnStoneSprite(Utils.MouseToScreen(Mouse.current.position.ReadValue()));
             taskSystem.EnqueueTask(() =>
             {
-                if (Time.time >= waitTime)
+                if (stoneSlot.IsEmpty())
                 {
-                    TaskSystem.Task.BloodCleanUp task = new TaskSystem.Task.BloodCleanUp
+                    stoneSlot.SetHasItemIncoming(true);
+                    Task task = new Task.TakeStoneToStoneSlot
                     {
-                        targetPosition = blood.transform.position,
-                        cleanUpAction = () =>
+                        stonePosition = stoneGameObject.transform.position,
+                        stoneSlotPosition = stoneSlot.GetPosition(),
+                        grabStone = (WorkerTaskAI worker) =>
                         {
-                            float alpha = 1f;
-                            FunctionUpdater.Create(() =>
-                            {
-                                alpha -= Time.deltaTime;
-                                spriteRenderer.color = new Color(1f, 1f, 1f, alpha);
-                                if (alpha <= 0f) return true;
-                                else return false;
-                            });
+                            stoneGameObject.transform.SetParent(worker.transform);
+                        },
+                        dropStone = () =>
+                        {
+                            stoneGameObject.transform.SetParent(null);
+                            stoneSlot.SetStoneTransform(stoneGameObject.transform);
                         }
                     };
                     return task;
@@ -58,8 +60,7 @@ public class GameManager : MonoBehaviour
         
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
-            TaskSystem.Task task = new TaskSystem.Task.Victory();
-            taskSystem.AddTask(task);
+            SpawnStoneSlot(Utils.MouseToScreen(Mouse.current.position.ReadValue()));
         }
     }
 
@@ -107,5 +108,76 @@ public class GameManager : MonoBehaviour
         gameObject.transform.position = position;
         gameObject.transform.localScale = new Vector3(3, 3);
         return gameObject;
+    }
+
+    private class StoneSlot
+    {
+        private Transform stoneSlotTransform;
+        private Transform stoneTransform;
+        private bool hasItemIncoming;
+
+        public StoneSlot(Transform stoneSlotTransform)
+        {
+            this.stoneSlotTransform = stoneSlotTransform;
+            SetStoneTransform(null);
+        }
+
+        public void SetStoneTransform(Transform stoneTransform)
+        {
+            this.stoneTransform = stoneTransform;
+            SetHasItemIncoming(false);
+            UpdateSprite();
+
+            if(stoneTransform != null)
+            {
+                FunctionTimer.Create(() =>
+                {
+                    Destroy(stoneTransform.gameObject);
+                    SetStoneTransform(null);
+                }, 3f);
+            }
+        }
+
+        public bool IsEmpty() 
+            => stoneTransform == null && !hasItemIncoming;
+
+        public void SetHasItemIncoming(bool hasItemIncoming)
+        {
+            this.hasItemIncoming = hasItemIncoming;
+            UpdateSprite();
+        }
+
+        public Vector2 GetPosition() 
+            => stoneSlotTransform.position;
+
+        private void UpdateSprite() 
+            => stoneSlotTransform.GetComponent<SpriteRenderer>().color = IsEmpty() ? Color.white : Color.red;
+    }
+
+    public class Task : TaskBase
+    {
+        public class MoveToPosition : Task
+        {
+            public Vector3 targetPosition;
+        }
+
+        public class Victory : Task
+        {
+
+        }
+
+        public class BloodCleanUp : Task
+        {
+            public Vector3 targetPosition;
+            public Action cleanUpAction;
+        }
+
+        public class TakeStoneToStoneSlot : Task
+        {
+            public Vector2 stonePosition;
+            public Action<WorkerTaskAI> grabStone;
+            public Vector2 stoneSlotPosition;
+            public Action dropStone;
+        }
     }
 }
