@@ -1,4 +1,3 @@
-using Jonko.Timers;
 using Jonko.Utils;
 using RTS.TaskSystem;
 using System;
@@ -13,16 +12,17 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Sprite pixelSprite;
 
     private TaskSystem<Task> taskSystem;
+    public static TaskSystem<TransporterTask> transporterTaskSystem;
 
     private StoneSlot stoneSlot;
 
     private void Start()
     {
         taskSystem = new TaskSystem<Task>();
+        transporterTaskSystem = new TaskSystem<TransporterTask>();
 
         SpawnWorker(new Vector2(0, 0));
-        //SpawnWorker(new Vector2(1, 1));
-        //SpawnWorker(new Vector2(1.5f, 1));
+        SpawnTransporter(new Vector2(1, 1));
 
         GameObject stoneSlotGameObject = SpawnStoneSlot(new Vector2(4, 2));
         stoneSlot = new StoneSlot(stoneSlotGameObject.transform);
@@ -85,6 +85,15 @@ public class GameManager : MonoBehaviour
         return unit;
     }
 
+    public GameObject SpawnTransporter(Vector2 position)
+    {
+        GameObject unit = SpawnRTSUnit(position);
+
+        TranspoterTaskAI transpoterTaskAI = unit.AddComponent<TranspoterTaskAI>();
+        transpoterTaskAI.Setup(unit.GetComponent<RTSUnit>(), transporterTaskSystem);
+        return unit;
+    }
+
     public GameObject SpawnBlood(Vector2 position)
     {
         GameObject gameObject = new GameObject("BloodSplatter", typeof(SpriteRenderer));
@@ -128,13 +137,19 @@ public class GameManager : MonoBehaviour
             SetHasItemIncoming(false);
             UpdateSprite();
 
-            if(stoneTransform != null)
+            if(this.stoneTransform != null)
             {
-                FunctionTimer.Create(() =>
+                TransporterTask.TakeItemFromSlotToPosition task = new TransporterTask.TakeItemFromSlotToPosition
                 {
-                    Destroy(stoneTransform.gameObject);
-                    SetStoneTransform(null);
-                }, 3f);
+                    itemSlotPosition = GetPosition(),
+                    targetPosition = GetPosition() + new Vector2(1, 0),
+                    grabItem = (TranspoterTaskAI transporter) 
+                        => { stoneTransform.SetParent(transporter.transform);
+                             SetStoneTransform(null); },
+                    dropItem = () 
+                        => { stoneTransform.SetParent(null); },
+                };
+                transporterTaskSystem.AddTask(task);
             }
         }
 
@@ -178,6 +193,17 @@ public class GameManager : MonoBehaviour
             public Action<WorkerTaskAI> grabStone;
             public Vector2 stoneSlotPosition;
             public Action dropStone;
+        }
+    }
+
+    public class TransporterTask : TaskBase
+    {
+        public class TakeItemFromSlotToPosition : TransporterTask
+        {
+            public Vector2 itemSlotPosition;
+            public Vector2 targetPosition;
+            public Action<TranspoterTaskAI> grabItem;
+            public Action dropItem;
         }
     }
 }
