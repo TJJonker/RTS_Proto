@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Jonko.Grids {
     public class Grid
     {
@@ -5,7 +7,7 @@ namespace Jonko.Grids {
         private int height;
         private int[,] gridArray;
 
-        public Grid(int width, int height)
+        public Grid(int width, int height, float cellSize)
         {
             this.width = width;
             this.height = height;
@@ -16,7 +18,7 @@ namespace Jonko.Grids {
             {
                 for(int y = 0; y < gridArray.GetLength(1); y++)
                 {
-                    
+                    Visualisation.Visualisation.CreateWorldText("yay", Color.white);
                 }
             }
         }
