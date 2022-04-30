@@ -6,14 +6,16 @@ namespace Jonko.Grids {
         private int width;
         private int height;
         private float cellSize;
+        private Vector2 originPosition;
         private int[,] gridArray;
         private TextMesh[,] debugTextArray;
 
-        public Grid(int width, int height, float cellSize)
+        public Grid(int width, int height, float cellSize, Vector2 originPosition)
         {
             this.width = width;
             this.height = height;
             this.cellSize = cellSize;
+            this.originPosition = originPosition;
 
 
             gridArray = new int[width, height];
@@ -41,7 +43,7 @@ namespace Jonko.Grids {
         /// <param name="position"> Vector2 grid position </param>
         /// <returns></returns>
         private Vector2 GetWorldPosition(Vector2 position)
-            => position * cellSize;
+            => position * cellSize + originPosition;
 
         /// <summary>
         ///     Converts grid position to world position
@@ -60,8 +62,8 @@ namespace Jonko.Grids {
         /// <param name="y"> Y position on the grid </param>
         private void GetGridPosition(Vector2 position, out int x, out int y)
         {
-            x = Mathf.FloorToInt(position.x / cellSize);
-            y = Mathf.FloorToInt(position.y / cellSize);
+            x = Mathf.FloorToInt((position.x - originPosition.x) / cellSize);
+            y = Mathf.FloorToInt((position.y - originPosition.y) / cellSize);
         }
 
         /// <summary>

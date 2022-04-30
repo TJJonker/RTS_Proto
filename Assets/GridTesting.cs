@@ -9,7 +9,7 @@ public class GridTesting : MonoBehaviour
 
     private void Start()
     {
-        grid = new Grid(20, 10, .5f);
+        grid = new Grid(20, 10, .5f, new Vector2(-5, -3));
     }
 
     private void Update()
