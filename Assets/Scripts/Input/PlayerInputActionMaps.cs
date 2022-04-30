@@ -37,6 +37,24 @@ namespace RTS.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Camera Movement"",
+                    ""type"": ""Value"",
+                    ""id"": ""c28783da-833b-402d-b449-da9dddc68da3"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Camera Zoom"",
+                    ""type"": ""Value"",
+                    ""id"": ""7868873e-7f24-4535-8ba2-a3d7bc3f807f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -48,6 +66,72 @@ namespace RTS.Input
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Open Console"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""6187a3f9-0d47-4783-8cda-8647fffd743b"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Camera Movement"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""2d2c499b-7fe7-41d7-92ce-afa9d527a7a3"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Camera Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""621c6631-f3a6-46c9-b462-891f014be225"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Camera Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""fed34c2b-d470-49be-b8f3-cb0b2a29a820"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Camera Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""449a6711-38aa-4a45-b2fe-07b694e80b0c"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Camera Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a82a0dda-8339-4d27-943f-25601917286d"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Camera Zoom"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -107,6 +191,8 @@ namespace RTS.Input
             // Gameplay
             m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
             m_Gameplay_OpenConsole = m_Gameplay.FindAction("Open Console", throwIfNotFound: true);
+            m_Gameplay_CameraMovement = m_Gameplay.FindAction("Camera Movement", throwIfNotFound: true);
+            m_Gameplay_CameraZoom = m_Gameplay.FindAction("Camera Zoom", throwIfNotFound: true);
             // Debug Console
             m_DebugConsole = asset.FindActionMap("Debug Console", throwIfNotFound: true);
             m_DebugConsole_Submit = m_DebugConsole.FindAction("Submit", throwIfNotFound: true);
@@ -171,11 +257,15 @@ namespace RTS.Input
         private readonly InputActionMap m_Gameplay;
         private IGameplayActions m_GameplayActionsCallbackInterface;
         private readonly InputAction m_Gameplay_OpenConsole;
+        private readonly InputAction m_Gameplay_CameraMovement;
+        private readonly InputAction m_Gameplay_CameraZoom;
         public struct GameplayActions
         {
             private @PlayerInputActionMaps m_Wrapper;
             public GameplayActions(@PlayerInputActionMaps wrapper) { m_Wrapper = wrapper; }
             public InputAction @OpenConsole => m_Wrapper.m_Gameplay_OpenConsole;
+            public InputAction @CameraMovement => m_Wrapper.m_Gameplay_CameraMovement;
+            public InputAction @CameraZoom => m_Wrapper.m_Gameplay_CameraZoom;
             public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -188,6 +278,12 @@ namespace RTS.Input
                     @OpenConsole.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnOpenConsole;
                     @OpenConsole.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnOpenConsole;
                     @OpenConsole.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnOpenConsole;
+                    @CameraMovement.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnCameraMovement;
+                    @CameraMovement.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnCameraMovement;
+                    @CameraMovement.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnCameraMovement;
+                    @CameraZoom.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnCameraZoom;
+                    @CameraZoom.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnCameraZoom;
+                    @CameraZoom.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnCameraZoom;
                 }
                 m_Wrapper.m_GameplayActionsCallbackInterface = instance;
                 if (instance != null)
@@ -195,6 +291,12 @@ namespace RTS.Input
                     @OpenConsole.started += instance.OnOpenConsole;
                     @OpenConsole.performed += instance.OnOpenConsole;
                     @OpenConsole.canceled += instance.OnOpenConsole;
+                    @CameraMovement.started += instance.OnCameraMovement;
+                    @CameraMovement.performed += instance.OnCameraMovement;
+                    @CameraMovement.canceled += instance.OnCameraMovement;
+                    @CameraZoom.started += instance.OnCameraZoom;
+                    @CameraZoom.performed += instance.OnCameraZoom;
+                    @CameraZoom.canceled += instance.OnCameraZoom;
                 }
             }
         }
@@ -243,6 +345,8 @@ namespace RTS.Input
         public interface IGameplayActions
         {
             void OnOpenConsole(InputAction.CallbackContext context);
+            void OnCameraMovement(InputAction.CallbackContext context);
+            void OnCameraZoom(InputAction.CallbackContext context);
         }
         public interface IDebugConsoleActions
         {

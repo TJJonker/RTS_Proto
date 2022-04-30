@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+///     Manager responsible for changing, enabling and disabling actionMaps.
+/// </summary>
 public class InputManager : MonoBehaviour
 {
     public static InputManager Instance;
