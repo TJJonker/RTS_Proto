@@ -1,7 +1,6 @@
 using UnityEngine;
 using Cinemachine;
 using RTS.Input;
-using UnityEngine.InputSystem;
 
 public class CameraHandler : MonoBehaviour
 {

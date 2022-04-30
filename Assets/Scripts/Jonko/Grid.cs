@@ -79,6 +79,18 @@ namespace Jonko.Grids {
         /// <summary>
         ///     Sets the value a specific place in the grid
         /// </summary>
+        /// <param name="position"> Position on the grid </param>
+        /// <param name="value"> Value to put in the grid spot </param>
+        public void SetValue(Vector3 position, int value)
+        {
+            int x, y;
+            GetGridPosition(position, out x, out y);
+            SetValue(x, y, value);
+        }
+
+        /// <summary>
+        ///     Sets the value a specific place in the grid
+        /// </summary>
         /// <param name="x"> X position on the grid </param>
         /// <param name="y"> Y position on the grid </param>
         /// <param name="value"> Value to put in the grid spot </param>
@@ -91,17 +103,6 @@ namespace Jonko.Grids {
             }
         }
 
-        /// <summary>
-        ///     Sets the value a specific place in the grid
-        /// </summary>
-        /// <param name="position"> Position on the grid </param>
-        /// <param name="value"> Value to put in the grid spot </param>
-        public void SetValue(Vector3 position, int value)
-        {
-            int x, y;
-            GetGridPosition(position, out x, out y);
-            SetValue(x, y, value);
-        }
 
 
     }
