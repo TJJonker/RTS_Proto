@@ -1,18 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Grid = Jonko.Grids.Grid;
 
 public class HeatMapVisual : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private Grid grid;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public void SetGrid(Grid grid) => this.grid = grid;
 }
