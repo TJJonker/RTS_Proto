@@ -3,6 +3,10 @@ using UnityEngine;
 namespace Jonko.Grids {
     public class Grid
     {
+        private const int HEAT_MAP_MAX_VALUE = 100;
+        private const int HEAT_MAP_MIN_VALUE = 0;
+
+
         private int width;
         private int height;
         private float cellSize;
@@ -10,6 +14,13 @@ namespace Jonko.Grids {
         private int[,] gridArray;
         private TextMesh[,] debugTextArray;
 
+        /// <summary>
+        ///     Creates a grid
+        /// </summary>
+        /// <param name="width"> Width of the grid </param>
+        /// <param name="height"> Height of the grid </param>
+        /// <param name="cellSize"> Size of the cells in the grid </param>
+        /// <param name="originPosition"> Origin position of the grid </param>
         public Grid(int width, int height, float cellSize, Vector2 originPosition)
         {
             this.width = width;
@@ -98,12 +109,35 @@ namespace Jonko.Grids {
         {
             if(x >= 0 && y >= 0 && x < width && y < height)
             {
-                gridArray[x,y] = value;
+                gridArray[x,y] = Mathf.Clamp(value, HEAT_MAP_MIN_VALUE, HEAT_MAP_MAX_VALUE);
                 debugTextArray[x,y].text = gridArray[x, y].ToString();
             }
         }
 
+        /// <summary>
+        ///     Returns the value of a specific place in the grid
+        /// </summary>
+        /// <param name="position"> The position on the grid </param>
+        /// <returns> The value of the given place in the grid </returns>
+        public int GetValue(Vector3 position)
+        {
+            int x, y;
+            GetGridPosition(position, out x, out y);
+            if (x >= 0 && y >= 0 && x < width && y < height)
+                return gridArray[x, y];
+            else return -1;
+        }
 
+        /// <summary>
+        ///     Returns the value of a specific place in the grid
+        /// </summary>
+        /// <param name="x"> X position on the grid </param>
+        /// <param name="y"> Y position on the grid </param>
+        /// <returns> The value of the given place in the grid </returns>
+        public int GetValue(int x, int y)
+        {
+            return GetValue(new Vector2(x, y));
+        }
 
     }
 }

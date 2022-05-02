@@ -1,8 +1,8 @@
-using Jonko.Patterns;
+
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Input_Game : IStatePattern
+public class Input_Game 
 {
     private Vector2 selectionStart;
 
