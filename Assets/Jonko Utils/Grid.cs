@@ -1,16 +1,22 @@
+using System;
 using UnityEngine;
 
 namespace Jonko.Grids {
     public class Grid
     {
-        private const int HEAT_MAP_MAX_VALUE = 100;
-        private const int HEAT_MAP_MIN_VALUE = 0;
+        public const int HEAT_MAP_MAX_VALUE = 100;
+        public const int HEAT_MAP_MIN_VALUE = 0;
 
+        public event EventHandler<EAOnGridValueChanged> OnGridValueChanged;
+        public class EAOnGridValueChanged : EventArgs
+        {
+            public int x, y;
+        }
 
         private int width;
         private int height;
         private float cellSize;
-        private Vector2 originPosition;
+        private Vector3 originPosition;
         private int[,] gridArray;
         private TextMesh[,] debugTextArray;
 
@@ -37,7 +43,7 @@ namespace Jonko.Grids {
                 for(int y = 0; y < gridArray.GetLength(1); y++)
                 {
                     debugTextArray[x, y] = Visualisation.Visualisation.CreateWorldText(gridArray[x,y].ToString(), Color.white, null, 
-                        GetWorldPosition(x, y) + Vector2.one * cellSize * .5f, 4, TextAnchor.MiddleCenter, TextAlignment.Center);
+                        GetWorldPosition(x, y) + Vector3.one * cellSize * .5f, 4, TextAnchor.MiddleCenter, TextAlignment.Center);
                     Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100);
                     Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100);
                 }
@@ -53,7 +59,7 @@ namespace Jonko.Grids {
         /// </summary>
         /// <param name="position"> Vector2 grid position </param>
         /// <returns></returns>
-        private Vector2 GetWorldPosition(Vector2 position)
+        public Vector3 GetWorldPosition(Vector3 position)
             => position * cellSize + originPosition;
 
         /// <summary>
@@ -62,8 +68,8 @@ namespace Jonko.Grids {
         /// <param name="x"> X position on the grid </param>
         /// <param name="y"> Y position on the grid </param>
         /// <returns></returns>
-        private Vector2 GetWorldPosition(int x, int y) 
-            => GetWorldPosition(new Vector2(x, y));
+        public Vector3 GetWorldPosition(int x, int y) 
+            => GetWorldPosition(new Vector3(x, y));
 
         /// <summary>
         ///     Converts world position to grid position
@@ -110,6 +116,7 @@ namespace Jonko.Grids {
             if(x >= 0 && y >= 0 && x < width && y < height)
             {
                 gridArray[x,y] = Mathf.Clamp(value, HEAT_MAP_MIN_VALUE, HEAT_MAP_MAX_VALUE);
+                if(OnGridValueChanged != null) OnGridValueChanged(this, new EAOnGridValueChanged { x = x, y = y });
                 debugTextArray[x,y].text = gridArray[x, y].ToString();
             }
         }
@@ -121,11 +128,8 @@ namespace Jonko.Grids {
         /// <returns> The value of the given place in the grid </returns>
         public int GetValue(Vector3 position)
         {
-            int x, y;
-            GetGridPosition(position, out x, out y);
-            if (x >= 0 && y >= 0 && x < width && y < height)
-                return gridArray[x, y];
-            else return -1;
+            GetGridPosition(position, out int x, out int y);
+            return GetValue(x, y);
         }
 
         /// <summary>
@@ -136,8 +140,28 @@ namespace Jonko.Grids {
         /// <returns> The value of the given place in the grid </returns>
         public int GetValue(int x, int y)
         {
-            return GetValue(new Vector2(x, y));
+            if (x >= 0 && y >= 0 && x < width && y < height)
+                return gridArray[x, y];
+            else return -1;
         }
+
+        /// <summary>
+        ///     Returns the width of the grid
+        /// </summary>
+        /// <returns> Returns the width of the grid </returns>
+        public int GetWidth() => width;
+
+        /// <summary>
+        ///     Returns the height of the grid
+        /// </summary>
+        /// <returns> Returns the height of the grid </returns>
+        public int GetHeight() => height;
+
+        /// <summary>
+        ///     Returns The size of the cells
+        /// </summary>
+        /// <returns> Returns The size of the cells </returns>
+        public float GetCellSize() => cellSize;
 
     }
 }

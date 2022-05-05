@@ -1042,12 +1042,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1205641264}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5c37001d0f81abf42a955c156b1422a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  heatMapVisual: {fileID: 0}
+  heatMapVisual: {fileID: 2141661951}
 --- !u!114 &1205641271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1055,7 +1055,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1205641264}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7fa1399727e477b40a718474279f0f72, type: 3}
   m_Name: 

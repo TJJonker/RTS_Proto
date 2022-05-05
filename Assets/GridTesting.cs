@@ -19,7 +19,7 @@ public class GridTesting : MonoBehaviour
 
         playerInputActionMaps.Gameplay.LeftMouse.started += ChangeValue;
 
-        grid = new Grid(20, 10, .75f, new Vector2(-5, -3));
+        grid = new Grid(5, 10, .75f, new Vector2(-5, -3));
         heatMapVisual.SetGrid(grid);
     }
 
