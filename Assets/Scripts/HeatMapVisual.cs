@@ -1,6 +1,6 @@
 using Jonko.Utils;
 using UnityEngine;
-using Grid = Jonko.Grids.Grid;
+using Grid = Jonko.Grids.Grid<int>;
 
 public class HeatMapVisual : MonoBehaviour
 {

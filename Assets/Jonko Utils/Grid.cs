@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 namespace Jonko.Grids {
-    public class Grid
+    public class Grid<TGridObject>
     {
         public const int HEAT_MAP_MAX_VALUE = 100;
         public const int HEAT_MAP_MIN_VALUE = 0;
@@ -17,7 +17,7 @@ namespace Jonko.Grids {
         private int height;
         private float cellSize;
         private Vector3 originPosition;
-        private int[,] gridArray;
+        private TGridObject[,] gridArray;
         private TextMesh[,] debugTextArray;
 
         /// <summary>
@@ -35,20 +35,25 @@ namespace Jonko.Grids {
             this.originPosition = originPosition;
 
 
-            gridArray = new int[width, height];
-            debugTextArray = new TextMesh[width, height];
+            gridArray = new TGridObject[width, height];
 
-            for(int x = 0; x < gridArray.GetLength(0); x++)
+            var showDebug = true;
+            debugTextArray = new TextMesh[width, height];
+            if (showDebug)
             {
-                for(int y = 0; y < gridArray.GetLength(1); y++)
+                for (int x = 0; x < gridArray.GetLength(0); x++)
                 {
-                    debugTextArray[x, y] = Visualisation.Visualisation.CreateWorldText(gridArray[x,y].ToString(), Color.white, null, GetWorldPosition(x, y) + Vector3.one * cellSize * .5f, 4, TextAnchor.MiddleCenter, TextAlignment.Center);
-                    Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100);
-                    Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100);
+                    for (int y = 0; y < gridArray.GetLength(1); y++)
+                    {
+                        debugTextArray[x, y] = Visualisation.Visualisation.CreateWorldText(gridArray[x, y].ToString(), Color.white, 
+                            null, GetWorldPosition(x, y) + Vector3.one * cellSize * .5f, 3, TextAnchor.MiddleCenter, TextAlignment.Center);
+                        Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100);
+                        Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100);
+                    }
                 }
+                Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100);
+                Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100);
             }
-            Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100);
-            Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100);
         }
 
         /// <summary>
@@ -95,7 +100,7 @@ namespace Jonko.Grids {
         /// </summary>
         /// <param name="position"> Position on the grid </param>
         /// <param name="value"> Value to put in the grid spot </param>
-        public void SetValue(Vector3 position, int value)
+        public void SetValue(Vector3 position, TGridObject value)
         {
             int x, y;
             GetGridPosition(position, out x, out y);
@@ -108,11 +113,11 @@ namespace Jonko.Grids {
         /// <param name="x"> X position on the grid </param>
         /// <param name="y"> Y position on the grid </param>
         /// <param name="value"> Value to put in the grid spot </param>
-        public void SetValue(int x, int y, int value)
+        public void SetValue(int x, int y, TGridObject value)
         {
             if(x >= 0 && y >= 0 && x < width && y < height)
             {
-                gridArray[x,y] = Mathf.Clamp(value, HEAT_MAP_MIN_VALUE, HEAT_MAP_MAX_VALUE);
+                gridArray[x, y] = value;
                 if(OnGridValueChanged != null) OnGridValueChanged(this, new EAOnGridValueChanged { x = x, y = y });
                 debugTextArray[x,y].text = gridArray[x, y].ToString();
             }
@@ -123,7 +128,7 @@ namespace Jonko.Grids {
         /// </summary>
         /// <param name="position"> The position on the grid </param>
         /// <returns> The value of the given place in the grid </returns>
-        public int GetValue(Vector3 position)
+        public TGridObject GetValue(Vector3 position)
         {
             GetGridPosition(position, out int x, out int y);
             return GetValue(x, y);
@@ -135,11 +140,11 @@ namespace Jonko.Grids {
         /// <param name="x"> X position on the grid </param>
         /// <param name="y"> Y position on the grid </param>
         /// <returns> The value of the given place in the grid </returns>
-        public int GetValue(int x, int y)
+        public TGridObject GetValue(int x, int y)
         {
             if (x >= 0 && y >= 0 && x < width && y < height)
                 return gridArray[x, y];
-            else return -1;
+            else return default(TGridObject);
         }
 
         /// <summary>
@@ -159,39 +164,5 @@ namespace Jonko.Grids {
         /// </summary>
         /// <returns> Returns The size of the cells </returns>
         public float GetCellSize() => cellSize;
-
-        public void AddValue(int x, int y, int value)
-        {
-            SetValue(x, y, GetValue(x, y) + value);
-        }
-
-        public void AddRangedValue(Vector3 worldPosition, int value, int fullValueRange, int totalRange)
-        {
-            int lowerValueAmount = Mathf.RoundToInt((float)value / (totalRange - fullValueRange));
-
-            GetGridPosition(worldPosition, out int originX, out int originY);
-            for(int x = 0; x < totalRange; x++)
-            {
-                for(int y = 0; y < totalRange - x; y++)
-                {
-                    int radius = x + y;
-                    int addValueAmount = value;
-                    if(radius > fullValueRange) addValueAmount -= lowerValueAmount * (radius - fullValueRange);
-
-                    // Right upperside
-                    AddValue(originX + x, originY + y, addValueAmount);
-                    // Left upperside
-                    if (x != 0) AddValue(originX - x, originY + y, addValueAmount);
-                    if (y == 0) continue;
-                    // Right lowerside
-                    AddValue(originX + x, originY - y, addValueAmount);
-                    // Left lowerside
-                    if (x != 0) AddValue(originX - x, originY - y, addValueAmount);
-
-
-                }
-            }
-        }
-
     }
 }
