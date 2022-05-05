@@ -49,8 +49,6 @@ public class HeatMapVisual : MonoBehaviour
                 MeshUtils.AddToMeshArray(ref vertices, ref uv, ref triangles, index, grid.GetWorldPosition(x, y) + quadSize / 2f, 0f, quadSize, gridValueUV, gridValueUV);
             }
         }
-        mesh.vertices = vertices;
-        mesh.uv = uv;
-        mesh.triangles = triangles;
+        MeshUtils.ApplyToMesh(mesh, vertices, uv, triangles);
     }
 }

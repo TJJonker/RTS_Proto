@@ -33,7 +33,7 @@ namespace Jonko.Utils
         }
 
         /// <summary>
-        ///     Adds a single quad directly to the referenced mesh at the given index
+        ///     Adds a single quad directly to the referenced mesh
         /// </summary>
         /// <param name="mesh"> Mesh to add a quad to </param>
         /// <param name="pos"> World space position of the quad </param>
@@ -68,7 +68,7 @@ namespace Jonko.Utils
         }
 
         /// <summary>
-        ///     Adds a single quad to the given mesh arrays
+        ///     Adds a single quad to the given mesh arrays at the given index
         /// </summary>
         /// <param name="vertices"> Array of vertices to add the quad to </param>
         /// <param name="uvs"> Array of uvs to add the quad to </param>
@@ -127,7 +127,20 @@ namespace Jonko.Utils
             triangles[tIndex + 5] = vIndex2;
         }
 
-
+        /// <summary>
+        ///     Applies the vertices, uvs and triangles to the mesh object
+        /// </summary>
+        /// <param name="mesh"> Mesh to apply the params to </param>
+        /// <param name="vertices"> Vertice array to apply </param>
+        /// <param name="uvs"> UV array to apply </param>
+        /// <param name="triangles"> triangle array to apply </param>
+        public static void ApplyToMesh(Mesh mesh, Vector3[] vertices, Vector2[] uvs, int[] triangles)
+        {
+            mesh.vertices = vertices;
+            mesh.uv = uvs;
+            mesh.triangles = triangles;
+        }
+        
         #region Private/Helper Functions
         /// <summary>
         ///     Converts a float rotation to an Euler rotation on the Z-Axis
