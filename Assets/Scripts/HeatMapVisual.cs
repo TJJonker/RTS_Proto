@@ -6,13 +6,12 @@ public class HeatMapVisual : MonoBehaviour
 {
     private Grid grid;
     private Mesh mesh;
-    private MeshFilter meshFilter;
+    private bool updateMesh;
 
     private void Awake()
     {
         mesh = new Mesh();
-        meshFilter = GetComponent<MeshFilter>();
-        meshFilter.mesh = mesh;
+        GetComponent<MeshFilter>().mesh = mesh;
     }
 
     private void Start()
@@ -24,7 +23,16 @@ public class HeatMapVisual : MonoBehaviour
 
     private void OnGridValueChanged(object sender, Grid.EAOnGridValueChanged e)
     {
-        UpdateHeatMapsVisual();
+        updateMesh = true;
+    }
+
+    private void LateUpdate()
+    {
+        if (updateMesh)
+        {
+            updateMesh = false;
+            UpdateHeatMapsVisual();
+        }
     }
 
     public void SetGrid(Grid grid) => this.grid = grid;
@@ -42,7 +50,6 @@ public class HeatMapVisual : MonoBehaviour
                 Vector3 quadSize = Vector3.one * grid.GetCellSize();
 
                 int gridValue = grid.GetValue(x, y);
-                Debug.Log(gridValue);
                 float gridValueNormalized = (float)gridValue / Grid.HEAT_MAP_MAX_VALUE;
                 Vector2 gridValueUV = new Vector2(gridValueNormalized, 0f);
 

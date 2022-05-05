@@ -42,16 +42,13 @@ namespace Jonko.Grids {
             {
                 for(int y = 0; y < gridArray.GetLength(1); y++)
                 {
-                    debugTextArray[x, y] = Visualisation.Visualisation.CreateWorldText(gridArray[x,y].ToString(), Color.white, null, 
-                        GetWorldPosition(x, y) + Vector3.one * cellSize * .5f, 4, TextAnchor.MiddleCenter, TextAlignment.Center);
+                    debugTextArray[x, y] = Visualisation.Visualisation.CreateWorldText(gridArray[x,y].ToString(), Color.white, null, GetWorldPosition(x, y) + Vector3.one * cellSize * .5f, 4, TextAnchor.MiddleCenter, TextAlignment.Center);
                     Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100);
                     Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100);
                 }
             }
             Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100);
             Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100);
-
-            SetValue(4, 7, 69);
         }
 
         /// <summary>
@@ -162,6 +159,39 @@ namespace Jonko.Grids {
         /// </summary>
         /// <returns> Returns The size of the cells </returns>
         public float GetCellSize() => cellSize;
+
+        public void AddValue(int x, int y, int value)
+        {
+            SetValue(x, y, GetValue(x, y) + value);
+        }
+
+        public void AddRangedValue(Vector3 worldPosition, int value, int fullValueRange, int totalRange)
+        {
+            int lowerValueAmount = Mathf.RoundToInt((float)value / (totalRange - fullValueRange));
+
+            GetGridPosition(worldPosition, out int originX, out int originY);
+            for(int x = 0; x < totalRange; x++)
+            {
+                for(int y = 0; y < totalRange - x; y++)
+                {
+                    int radius = x + y;
+                    int addValueAmount = value;
+                    if(radius > fullValueRange) addValueAmount -= lowerValueAmount * (radius - fullValueRange);
+
+                    // Right upperside
+                    AddValue(originX + x, originY + y, addValueAmount);
+                    // Left upperside
+                    if (x != 0) AddValue(originX - x, originY + y, addValueAmount);
+                    if (y == 0) continue;
+                    // Right lowerside
+                    AddValue(originX + x, originY - y, addValueAmount);
+                    // Left lowerside
+                    if (x != 0) AddValue(originX - x, originY - y, addValueAmount);
+
+
+                }
+            }
+        }
 
     }
 }
