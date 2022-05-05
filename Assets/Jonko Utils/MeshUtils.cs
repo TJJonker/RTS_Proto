@@ -4,6 +4,11 @@ namespace Jonko.Utils
 {
     public class MeshUtils
     {
+
+        /// <summary>
+        ///     Creates an empty mesh 
+        /// </summary>
+        /// <returns> Returns an empty mesh </returns>
         public static Mesh CreateEmptyMesh()
         {
             Mesh mesh = new Mesh();
@@ -27,7 +32,16 @@ namespace Jonko.Utils
             triangles = new int[6 * quadCount];
         }
 
-        public static Mesh AddToMesh(ref Mesh mesh, Vector3 pos, float rot, Vector3 baseSize, Vector2 uv00, Vector2 uv11)
+        /// <summary>
+        ///     Adds a single quad directly to the referenced mesh at the given index
+        /// </summary>
+        /// <param name="mesh"> Mesh to add a quad to </param>
+        /// <param name="pos"> World space position of the quad </param>
+        /// <param name="rot"> Rotation of the quad </param>
+        /// <param name="baseSize"> Size of the quad </param>
+        /// <param name="uv00"> First UV position of the material </param>
+        /// <param name="uv11"> Second UV position of the material </param>
+        public static void AddToMesh(ref Mesh mesh, Vector3 pos, float rot, Vector3 baseSize, Vector2 uv00, Vector2 uv11)
         {
             // Create if mesh does not exist
             if(mesh == null) mesh = CreateEmptyMesh();
@@ -51,10 +65,20 @@ namespace Jonko.Utils
             mesh.vertices = vertices;
             mesh.triangles = triangles;
             mesh.uv = uvs;
-
-            return mesh;
         }
 
+        /// <summary>
+        ///     Adds a single quad to the given mesh arrays
+        /// </summary>
+        /// <param name="vertices"> Array of vertices to add the quad to </param>
+        /// <param name="uvs"> Array of uvs to add the quad to </param>
+        /// <param name="triangles"> Array of triangles to add the quad to </param>
+        /// <param name="index"> Index of the quad in the arrays </param>
+        /// <param name="pos"> World space position of the quad </param>
+        /// <param name="rotation"> Rotation of the quad </param>
+        /// <param name="baseSize"> Size of the quad </param>
+        /// <param name="uv00"> First UV position of the material </param>
+        /// <param name="uv11"> Second UV position of the material </param>
         public static void AddToMeshArray(ref Vector3[] vertices, ref Vector2[] uvs, ref int[] triangles, int index, Vector3 pos, 
             float rotation, Vector3 baseSize, Vector2 uv00, Vector2 uv11)
         {
@@ -105,6 +129,11 @@ namespace Jonko.Utils
 
 
         #region Private/Helper Functions
+        /// <summary>
+        ///     Converts a float rotation to an Euler rotation on the Z-Axis
+        /// </summary>
+        /// <param name="rotation"> Float rotation </param>
+        /// <returns> Euler rotation on the Z-Axis </returns>
         private static Quaternion GetQuaternionEuler(float rotation)
         {
             int rot = Mathf.RoundToInt(rotation);
