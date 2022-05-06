@@ -1,10 +1,10 @@
 using Jonko.Utils;
 using UnityEngine;
-using Grid = Jonko.Grids.Grid<int>;
+using Jonko.Grids;
 
-public class HeatMapVisual : MonoBehaviour
+public class HeatMapBoolVisual : MonoBehaviour
 {
-    private Grid grid;
+    private Grid<bool> grid;
     private Mesh mesh;
     private bool updateMesh;
 
@@ -16,12 +16,13 @@ public class HeatMapVisual : MonoBehaviour
 
     private void Start()
     {
+
         UpdateHeatMapsVisual();
 
         grid.OnGridValueChanged += OnGridValueChanged;
     }
 
-    private void OnGridValueChanged(object sender, Grid.EAOnGridValueChanged e)
+    private void OnGridValueChanged(object sender, Grid<bool>.EAOnGridValueChanged e)
     {
         updateMesh = true;
     }
@@ -35,7 +36,7 @@ public class HeatMapVisual : MonoBehaviour
         }
     }
 
-    public void SetGrid(Grid grid) => this.grid = grid;
+    public void SetGrid(Grid<bool> grid) => this.grid = grid;
 
     private void UpdateHeatMapsVisual()
     {
@@ -49,8 +50,8 @@ public class HeatMapVisual : MonoBehaviour
                 int index = x * grid.GetHeight() + y;
                 Vector3 quadSize = Vector3.one * grid.GetCellSize();
 
-                int gridValue = grid.GetGridObject(x, y);
-                float gridValueNormalized = (float)gridValue / Grid.HEAT_MAP_MAX_VALUE;
+                bool gridValue = grid.GetGridObject(x, y);
+                float gridValueNormalized = gridValue ? 1f : 0f;
                 Vector2 gridValueUV = new Vector2(gridValueNormalized, 0f);
 
                 MeshUtils.AddToMeshArray(ref vertices, ref uv, ref triangles, index, grid.GetWorldPosition(x, y) + quadSize / 2f, 0f, quadSize, gridValueUV, gridValueUV);

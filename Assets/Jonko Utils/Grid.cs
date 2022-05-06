@@ -27,7 +27,7 @@ namespace Jonko.Grids {
         /// <param name="height"> Height of the grid </param>
         /// <param name="cellSize"> Size of the cells in the grid </param>
         /// <param name="originPosition"> Origin position of the grid </param>
-        public Grid(int width, int height, float cellSize, Vector2 originPosition)
+        public Grid(int width, int height, float cellSize, Vector2 originPosition, Func<TGridObject> createGridObject)
         {
             this.width = width;
             this.height = height;
@@ -37,6 +37,14 @@ namespace Jonko.Grids {
 
             gridArray = new TGridObject[width, height];
 
+            for(int x = 0; x < gridArray.GetLength(0); x++)
+            {
+                for(int y = 0; y < gridArray.GetLength(1); y++)
+                {
+                    gridArray[x, y] = createGridObject();
+                }
+            }
+
             var showDebug = true;
             debugTextArray = new TextMesh[width, height];
             if (showDebug)
@@ -45,7 +53,7 @@ namespace Jonko.Grids {
                 {
                     for (int y = 0; y < gridArray.GetLength(1); y++)
                     {
-                        debugTextArray[x, y] = Visualisation.Visualisation.CreateWorldText(gridArray[x, y].ToString(), Color.white, 
+                        debugTextArray[x, y] = Visualisation.Visualisation.CreateWorldText(gridArray[x, y]?.ToString(), Color.white, 
                             null, GetWorldPosition(x, y) + Vector3.one * cellSize * .5f, 3, TextAnchor.MiddleCenter, TextAlignment.Center);
                         Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100);
                         Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100);
@@ -100,11 +108,11 @@ namespace Jonko.Grids {
         /// </summary>
         /// <param name="position"> Position on the grid </param>
         /// <param name="value"> Value to put in the grid spot </param>
-        public void SetValue(Vector3 position, TGridObject value)
+        public void SetGridObject(Vector3 position, TGridObject value)
         {
             int x, y;
             GetGridPosition(position, out x, out y);
-            SetValue(x, y, value);
+            SetGridObject(x, y, value);
         }
 
         /// <summary>
@@ -113,7 +121,7 @@ namespace Jonko.Grids {
         /// <param name="x"> X position on the grid </param>
         /// <param name="y"> Y position on the grid </param>
         /// <param name="value"> Value to put in the grid spot </param>
-        public void SetValue(int x, int y, TGridObject value)
+        public void SetGridObject(int x, int y, TGridObject value)
         {
             if(x >= 0 && y >= 0 && x < width && y < height)
             {
@@ -128,10 +136,10 @@ namespace Jonko.Grids {
         /// </summary>
         /// <param name="position"> The position on the grid </param>
         /// <returns> The value of the given place in the grid </returns>
-        public TGridObject GetValue(Vector3 position)
+        public TGridObject GetGridObject(Vector3 position)
         {
             GetGridPosition(position, out int x, out int y);
-            return GetValue(x, y);
+            return GetGridObject(x, y);
         }
 
         /// <summary>
@@ -140,7 +148,7 @@ namespace Jonko.Grids {
         /// <param name="x"> X position on the grid </param>
         /// <param name="y"> Y position on the grid </param>
         /// <returns> The value of the given place in the grid </returns>
-        public TGridObject GetValue(int x, int y)
+        public TGridObject GetGridObject(int x, int y)
         {
             if (x >= 0 && y >= 0 && x < width && y < height)
                 return gridArray[x, y];
