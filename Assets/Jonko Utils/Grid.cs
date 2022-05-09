@@ -27,7 +27,7 @@ namespace Jonko.Grids {
         /// <param name="height"> Height of the grid </param>
         /// <param name="cellSize"> Size of the cells in the grid </param>
         /// <param name="originPosition"> Origin position of the grid </param>
-        public Grid(int width, int height, float cellSize, Vector2 originPosition, Func<TGridObject> createGridObject)
+        public Grid(int width, int height, float cellSize, Vector2 originPosition, Func<Grid<TGridObject>, int, int, TGridObject> createGridObject)
         {
             this.width = width;
             this.height = height;
@@ -41,7 +41,7 @@ namespace Jonko.Grids {
             {
                 for(int y = 0; y < gridArray.GetLength(1); y++)
                 {
-                    gridArray[x, y] = createGridObject();
+                    gridArray[x, y] = createGridObject(this, x, y);
                 }
             }
 
@@ -126,9 +126,19 @@ namespace Jonko.Grids {
             if(x >= 0 && y >= 0 && x < width && y < height)
             {
                 gridArray[x, y] = value;
-                if(OnGridValueChanged != null) OnGridValueChanged(this, new EAOnGridValueChanged { x = x, y = y });
-                debugTextArray[x,y].text = gridArray[x, y].ToString();
+                TriggerGridObjectChanged(x, y);
             }
+        }
+
+        /// <summary>
+        ///     Triggers the grid to change its value on a specific grid cell
+        /// </summary>
+        /// <param name="x"> X position of the grid cell </param>
+        /// <param name="y"> Y position of the grid cell </param>
+        public void TriggerGridObjectChanged(int x, int y)
+        {
+            OnGridValueChanged?.Invoke(this, new EAOnGridValueChanged { x = x, y = y });
+            debugTextArray[x, y].text = gridArray[x, y].ToString();
         }
 
         /// <summary>
