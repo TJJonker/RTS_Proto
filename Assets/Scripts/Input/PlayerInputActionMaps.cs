@@ -64,6 +64,15 @@ namespace RTS.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Right Mouse"",
+                    ""type"": ""Button"",
+                    ""id"": ""e5933862-a6d5-487b-86a2-78f2d6726496"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -154,6 +163,17 @@ namespace RTS.Input
                     ""action"": ""Left Mouse"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5ad29279-994b-4596-972c-5a906aae6d38"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Right Mouse"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -214,6 +234,7 @@ namespace RTS.Input
             m_Gameplay_CameraMovement = m_Gameplay.FindAction("Camera Movement", throwIfNotFound: true);
             m_Gameplay_CameraZoom = m_Gameplay.FindAction("Camera Zoom", throwIfNotFound: true);
             m_Gameplay_LeftMouse = m_Gameplay.FindAction("Left Mouse", throwIfNotFound: true);
+            m_Gameplay_RightMouse = m_Gameplay.FindAction("Right Mouse", throwIfNotFound: true);
             // Debug Console
             m_DebugConsole = asset.FindActionMap("Debug Console", throwIfNotFound: true);
             m_DebugConsole_Submit = m_DebugConsole.FindAction("Submit", throwIfNotFound: true);
@@ -281,6 +302,7 @@ namespace RTS.Input
         private readonly InputAction m_Gameplay_CameraMovement;
         private readonly InputAction m_Gameplay_CameraZoom;
         private readonly InputAction m_Gameplay_LeftMouse;
+        private readonly InputAction m_Gameplay_RightMouse;
         public struct GameplayActions
         {
             private @PlayerInputActionMaps m_Wrapper;
@@ -289,6 +311,7 @@ namespace RTS.Input
             public InputAction @CameraMovement => m_Wrapper.m_Gameplay_CameraMovement;
             public InputAction @CameraZoom => m_Wrapper.m_Gameplay_CameraZoom;
             public InputAction @LeftMouse => m_Wrapper.m_Gameplay_LeftMouse;
+            public InputAction @RightMouse => m_Wrapper.m_Gameplay_RightMouse;
             public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -310,6 +333,9 @@ namespace RTS.Input
                     @LeftMouse.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnLeftMouse;
                     @LeftMouse.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnLeftMouse;
                     @LeftMouse.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnLeftMouse;
+                    @RightMouse.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnRightMouse;
+                    @RightMouse.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnRightMouse;
+                    @RightMouse.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnRightMouse;
                 }
                 m_Wrapper.m_GameplayActionsCallbackInterface = instance;
                 if (instance != null)
@@ -326,6 +352,9 @@ namespace RTS.Input
                     @LeftMouse.started += instance.OnLeftMouse;
                     @LeftMouse.performed += instance.OnLeftMouse;
                     @LeftMouse.canceled += instance.OnLeftMouse;
+                    @RightMouse.started += instance.OnRightMouse;
+                    @RightMouse.performed += instance.OnRightMouse;
+                    @RightMouse.canceled += instance.OnRightMouse;
                 }
             }
         }
@@ -377,6 +406,7 @@ namespace RTS.Input
             void OnCameraMovement(InputAction.CallbackContext context);
             void OnCameraZoom(InputAction.CallbackContext context);
             void OnLeftMouse(InputAction.CallbackContext context);
+            void OnRightMouse(InputAction.CallbackContext context);
         }
         public interface IDebugConsoleActions
         {

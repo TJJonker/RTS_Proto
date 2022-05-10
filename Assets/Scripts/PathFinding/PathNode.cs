@@ -10,12 +10,14 @@ namespace Game.PathFinding
         public int gCost, hCost, fCost;
         public PathNode cameFromNode;
 
+        public bool isWalkable;
 
         public PathNode(Grid<PathNode> grid, int x, int y)
         {
             this.grid = grid;
             this.x = x;
             this.y = y;
+            isWalkable = true;
         }
 
         public void CalculateFCost()
@@ -24,5 +26,10 @@ namespace Game.PathFinding
         public override string ToString()
             => x + "," + y;
 
+        public void SetIsWalkable(bool isWalkable)
+        {
+            this.isWalkable = isWalkable;
+            grid.TriggerGridObjectChanged(x, y);
+        }
     }
 }
