@@ -87,7 +87,7 @@ namespace Jonko.Grids {
         /// <param name="position"> World position </param>
         /// <param name="x"> X position on the grid </param>
         /// <param name="y"> Y position on the grid </param>
-        private void GetGridPosition(Vector2 position, out int x, out int y)
+        public void GetGridPosition(Vector2 position, out int x, out int y)
         {
             x = Mathf.FloorToInt((position.x - originPosition.x) / cellSize);
             y = Mathf.FloorToInt((position.y - originPosition.y) / cellSize);
@@ -100,7 +100,7 @@ namespace Jonko.Grids {
         /// <param name="posY"> Y position in the world </param>
         /// <param name="x"> X position on the grid </param>
         /// <param name="y"> Y position on the grid </param>
-        private void GetGridPosition(int posX, int posY, out int x, out int y)
+        public void GetGridPosition(int posX, int posY, out int x, out int y)
             => GetGridPosition(new Vector2(posX, posY), out x, out y);
 
         /// <summary>

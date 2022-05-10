@@ -19,7 +19,10 @@ namespace Game.PathFinding
             grid = new Grid<PathNode>(width, height, 1f, Vector3.zero, (Grid<PathNode> g, int x, int y) => new PathNode(g, x, y));
         }
 
-        private List<PathNode> FindPath(int startX, int startY, int endX, int endY)
+        public Grid<PathNode> GetGrid()
+            => grid;
+
+        public List<PathNode> FindPath(int startX, int startY, int endX, int endY)
         {
             PathNode startNode = grid.GetGridObject(startX, startY);
             PathNode endNode = grid.GetGridObject(endX, endY);
@@ -49,12 +52,78 @@ namespace Game.PathFinding
                 PathNode currentNode = GetLowestFCostNode(openList);
                 if(currentNode == endNode) return CalculatePath(endNode);
                 
+                openList.Remove(currentNode);
+                closedList.Add(currentNode);    
+
+                foreach(PathNode neighbourNode in GetNeighbourList(currentNode))
+                {
+                    if (closedList.Contains(neighbourNode)) continue;
+
+                    int tentativeGCost = currentNode.gCost + CalculateDistanceCost(currentNode, neighbourNode);
+                    if(tentativeGCost < neighbourNode.gCost)
+                    {
+                        neighbourNode.cameFromNode = currentNode;
+                        neighbourNode.gCost = tentativeGCost;
+                        neighbourNode.hCost = CalculateDistanceCost(neighbourNode, endNode);
+                        neighbourNode.CalculateFCost();
+
+                        if(!openList.Contains(neighbourNode))
+                            openList.Add(neighbourNode);
+                    }
+
+                }
             }
+
+            return null;
+        }
+
+        private List<PathNode> GetNeighbourList(PathNode currentNode)
+        {
+            List<PathNode> neighbourList = new List<PathNode>();
+
+            int x = currentNode.x;
+            int y = currentNode.y;
+
+            // Left side
+            if(x - 1 >= 0)
+            {
+                // Left neighbour
+                neighbourList.Add(GetNode(x - 1, y));
+                // Bottom left neighbour
+                if (y - 1 >= 0) neighbourList.Add(GetNode(x - 1, y - 1));
+                // Top left neighbour
+                if (y + 1 < grid.GetHeight()) neighbourList.Add(GetNode(x - 1, y + 1));
+            }
+            // right side
+            if(x + 1 < grid.GetWidth())
+            {
+                // Right neighbour
+                neighbourList.Add(GetNode(x + 1, y));
+                // Bottom right neighbour
+                if (y - 1 >= 0) neighbourList.Add(GetNode(x + 1, y - 1));
+                // Top right neighbour
+                if (y + 1 < grid.GetHeight()) neighbourList.Add(GetNode(x + 1, y + 1));
+            }
+            // Lower neighbour
+            if (y - 1 >= 0) neighbourList.Add(GetNode(x, y - 1));
+            // Upper neighbour
+            if (y + 1 <= grid.GetHeight()) neighbourList.Add(GetNode(x,y + 1));
+
+            return neighbourList;
         }
 
         private List<PathNode> CalculatePath(PathNode endNode)
         {
-            return null;
+            List<PathNode> path = new List<PathNode>();
+            PathNode currentNode = endNode;
+            path.Add(endNode);
+            while(currentNode.cameFromNode != null)
+            {
+                path.Add(currentNode.cameFromNode);
+                currentNode = currentNode.cameFromNode;
+            }
+            path.Reverse();
+            return path;
         }
 
         private int CalculateDistanceCost(PathNode a, PathNode b)
@@ -73,5 +142,8 @@ namespace Game.PathFinding
                     lowestFCostNode = pathNodeList[i];
             return lowestFCostNode;
         }
+
+        private PathNode GetNode(int x, int y)
+            => grid.GetGridObject(x, y);
     }
 }
