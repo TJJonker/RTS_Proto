@@ -6,6 +6,8 @@ namespace Game.PathFinding
 {
     public class PathFinding 
     {
+        public static PathFinding Instance;
+
         private const int MOVE_STRAIGHT_COST = 10;
         private const int MOVE_DIAGONAL_COST = 14;
 
@@ -16,11 +18,27 @@ namespace Game.PathFinding
 
         public PathFinding(int width, int height)
         {
+            Instance = this;
             grid = new Grid<PathNode>(width, height, 1f, Vector3.zero, (Grid<PathNode> g, int x, int y) => new PathNode(g, x, y));
         }
 
         public Grid<PathNode> GetGrid()
             => grid;
+
+        public List<Vector3> FindPath(Vector3 startWorldPosition, Vector3 endWorldPosition)
+        {
+            grid.GetGridPosition(startWorldPosition, out int startX, out int startY);
+            grid.GetGridPosition(endWorldPosition, out int endX, out int endY);
+
+            List<PathNode> path = FindPath(startX, startY, endX, endY);
+
+            if (path == null) return null;
+
+            List<Vector3> vectorPath = new List<Vector3>();
+            foreach(PathNode pathNode in path)
+                vectorPath.Add(new Vector3(pathNode.x, pathNode.y) * grid.GetCellSize() + Vector3.one * grid.GetCellSize() * .5f);
+            return vectorPath;
+        }
 
         public List<PathNode> FindPath(int startX, int startY, int endX, int endY)
         {
