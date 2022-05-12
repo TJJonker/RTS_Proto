@@ -8,9 +8,14 @@ namespace Game.ECSPathFinding {
         private const int MOVE_DIAGONAL_COST = 14;
         private const int MOVE_STRAIGHT_COST = 10;
 
+        private void Start()
+        {
+            FindPath(new int2(0, 0), new int2(1, 2));
+        }
+
         private void FindPath(int2 startPosition, int2 endPosition)
         {
-            int2 gridSize = new int2(10, 10);
+            int2 gridSize = new int2(3, 3);
 
             NativeArray<PathNode> pathNodeArray = new NativeArray<PathNode>(gridSize.x * gridSize.y, Allocator.Temp);
 
@@ -90,21 +95,61 @@ namespace Game.ECSPathFinding {
                     int tentativeGCost = currentNode.gCost + CalculateDistanceCost(currentNodePosition, neighbourPosition);
                     if(tentativeGCost < neighbourNode.gCost)
                     {
-                        neighbourNode.cameFromNodeIndex = neighbourNodeIndex;
+                        neighbourNode.cameFromNodeIndex = currentNodeIndex;
                         neighbourNode.gCost = tentativeGCost;
                         neighbourNode.CalculateFCost();
                         pathNodeArray[neighbourNodeIndex] = neighbourNode;
 
-                        if(!openList.Contains(neighbourNodeIndex))
-                            openList.Add(neighbourNodeIndex);
+                        if(!openList.Contains(neighbourNode.index))
+                            openList.Add(neighbourNode.index);
                     }
                 }
+            }
+
+            PathNode endNode = pathNodeArray[endNodeIndex];
+            if(endNode.cameFromNodeIndex == -1)
+            {
+                Debug.Log("Did not find a path");
+            }
+            else
+            {
+                NativeList<int2> path = CalculatePath(pathNodeArray, endNode);
+                foreach (int2 pathPosition in path)
+                    Debug.Log(pathPosition);
+                path.Dispose();
             }
 
             pathNodeArray.Dispose();
             openList.Dispose();
             closedList.Dispose();
             neighbourOffsetArray.Dispose();
+        }
+
+        private NativeList<int2> CalculatePath(NativeArray<PathNode> pathNodeArray, PathNode endNode)
+        {
+            if (endNode.cameFromNodeIndex == -1)
+            {
+                // Couldn't find a path!
+                return new NativeList<int2>(Allocator.Temp);
+            }
+            else
+            {
+                // Found a path
+                NativeList<int2> path = new NativeList<int2>(Allocator.Temp);
+                path.Add(new int2(endNode.x, endNode.y));
+
+                PathNode currentNode = endNode;
+
+                
+                while (currentNode.cameFromNodeIndex != -1)
+                {
+                    PathNode cameFromNode = pathNodeArray[currentNode.cameFromNodeIndex];
+                    path.Add(new int2(cameFromNode.x, cameFromNode.y));
+                    currentNode = cameFromNode;
+                }
+                
+                return path;
+            }
         }
 
         private bool isPositionInsideGrid(int2 gridPosition, int2 gridSize)
