@@ -4,37 +4,20 @@ using UnityEngine;
 using Jonko.Timers;
 using Unity.Jobs;
 using Unity.Burst;
+using Unity.Entities;
 
 namespace Game.ECSPathFinding {
-    public class ECSPathFinding : MonoBehaviour
+    public class ECSPathFinding : ComponentSystem
     {
         private const int MOVE_DIAGONAL_COST = 14;
         private const int MOVE_STRAIGHT_COST = 10;
 
-        private void Start()
+        protected override void OnUpdate()
         {
-            FunctionTimer.Create(() =>
+            Entities.ForEach((Entity entity, ref PathfindingParams pathfindingParams) =>
             {
-                float startTime = Time.realtimeSinceStartup;
-
-                int findPathJobCount = 5;
-                NativeArray<JobHandle> jobHandleArray = new NativeArray<JobHandle>(findPathJobCount, Allocator.Temp);
-
-                for (int i = 0; i < findPathJobCount; i++)
-                {
-                    FindPathJob findPathJob = new FindPathJob
-                    {
-                        startPosition = new int2(0, 0),
-                        endPosition = new int2(19, 19),
-                    };
-                    jobHandleArray[i] = findPathJob.Schedule();
-                }
-
-                JobHandle.CompleteAll(jobHandleArray);
-                jobHandleArray.Dispose();
-
-                Debug.Log("Time: " + ((Time.realtimeSinceStartup - startTime) * 1000f));
-            }, 1f, true);
+                FindPathJob
+            });
         }
 
         [BurstCompile]
