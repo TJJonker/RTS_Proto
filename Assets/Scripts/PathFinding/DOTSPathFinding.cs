@@ -1,7 +1,6 @@
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
-using Jonko.Timers;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Entities;
@@ -16,8 +15,16 @@ namespace Game.ECSPathFinding {
         {
             Entities.ForEach((Entity entity, ref PathfindingParams pathfindingParams) =>
             {
-                FindPathJob
+                Debug.Log("Find Path");
+                FindPathJob findPathJob = new FindPathJob
+                {
+                    startPosition = pathfindingParams.startPosition,
+                    endPosition = pathfindingParams.endPosition,
+                };
+                findPathJob.Run();
+                PostUpdateCommands.RemoveComponent<PathfindingParams>(entity);
             });
+
         }
 
         [BurstCompile]

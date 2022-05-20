@@ -16,8 +16,8 @@ public class GridTesting : MonoBehaviour
     {
         playerInputActionMaps = InputManager.Instance.PlayerInputActionMap;
 
-        playerInputActionMaps.Gameplay.LeftMouse.started += LeftMouseTrigger;
-        playerInputActionMaps.Gameplay.RightMouse.started += RightMouseTrigger;
+        //playerInputActionMaps.Gameplay.LeftMouse.started += LeftMouseTrigger;
+        //playerInputActionMaps.Gameplay.RightMouse.started += RightMouseTrigger;
     }
 
     private void Start()
